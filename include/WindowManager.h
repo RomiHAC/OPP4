@@ -21,7 +21,6 @@ private:
     int H = 600;                 // Default window height
     float cellWidth = 0.f;       // Calculated cell width
     float cellHeight = 0.f;      // Calculated cell height
-
     void setupWindow();          // Setup window dimensions and properties
 
     sf::RenderWindow m_window;   // SFML render window
