@@ -71,7 +71,7 @@ void WindowManager::displayWindow() {
                 break;
 
             case sf::Event::MouseButtonReleased:
-                if (event.mouseButton.y > getCellHeight()) {  // Check mouse position relative to toolbar
+                if (event.mouseButton.y > 50) {  // Check mouse position relative to toolbar
                     board.handleMouseClick(event.mouseButton.x, event.mouseButton.y - 50, currentTool);
                 }
                 else {  // Toolbar area
@@ -80,7 +80,7 @@ void WindowManager::displayWindow() {
                 break;
 
             case sf::Event::MouseMoved:
-                if (event.mouseMove.y > getCellHeight()) {  // Check mouse position relative to toolbar
+                if (event.mouseMove.y > 50) {  // Check mouse position relative to toolbar
                     board.highlightCell(event.mouseMove.x, event.mouseMove.y, H, W);
                 }
                 break;
