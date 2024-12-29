@@ -40,18 +40,18 @@ void Board::initializeBoard(int cols, int rows, int W, int H) {
 }
 
 void Board::handleMouseClick(int mouseX, int mouseY, Object selectedObject) {
-    int col = mouseX / 32;  
-    int row = mouseY / 32; 
+    int col = mouseX / 32;  // גובה כל תא
+    int row = mouseY / 32;  // רוחב כל תא
 
     if (col >= 0 && col < width && row >= 0 && row < height) {
         size_t index = getIndex(col, row);
 
-        auto textures = loadTextures();  
+        auto textures = loadTextures();  // להטען הטקסטורות
         if (selectedObject == Object::DELETE) {
-            grid[index].setFillColor(sf::Color::White); 
+            grid[index].setFillColor(sf::Color::White);  // צבע רקע
         }
         else {
-            grid[index].setTexture(&textures[selectedObject]);  
+            grid[index].setTexture(&textures[selectedObject]);  // להחיל טקסטורה
         }
     }
 }
@@ -77,7 +77,7 @@ void Board::highlightCell(int mouseX, int mouseY,int H, int W ) {
     int col = static_cast<int>(mouseX / cellWidth);
     int row = static_cast<int>(adjustedMouseY / cellHeight);
 
-    // Debugging outputs
+    
     std::cout << "Mouse Position: (" << mouseX << ", " << mouseY << ")" << std::endl;
     std::cout << "Adjusted MouseY: " << adjustedMouseY << std::endl;
     std::cout << "Cell Dimensions: (" << cellWidth << ", " << cellHeight << ")" << std::endl;
