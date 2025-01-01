@@ -14,7 +14,13 @@ public:
 
     float getCellWidth() const;  // Accessor for cell width
     float getCellHeight() const; // Accessor for cell height
-
+    /// <summary>
+    /// shnage
+    /// </summary>
+    /// <returns></returns>
+    sf::RenderWindow& getRenderWindow();
+        
+    
 private:
     Board board;
     int W = 800;                 // Default window width
