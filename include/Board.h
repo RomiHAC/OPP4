@@ -24,8 +24,10 @@ public:
 
     std::vector<sf::Texture> loadTextures();
     void initializeBoard(int cols, int rows, int W, int H);
+   
     void handleMouseClick(int mouseX, int mouseY, Object selectedObject);
-    void highlightCell(int mouseX, int mouseY, int H, int W);
+    bool checkToolbarHover(int mouseX, int mouseY, int toolbarHeight);
+    void highlightCell(int mouseX, int mouseY, int H, int W, sf::RenderWindow* window);
     sf::Color getColorForObject(Object obj);
     bool isRobotPresent();
 
@@ -43,6 +45,13 @@ private:
     const std::string BOARD_FILE = "Board.txt";
 
     std::vector<std::string> toolbarConfig; // Store toolbar configuration
+    
     size_t getIndex(int x, int y) const;
+
+    /// <summary>
+    /// chnage 
+    /// </summary>
+   
+    bool isToolbarAreaHovered = false;
 
 };
