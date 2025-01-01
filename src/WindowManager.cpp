@@ -7,10 +7,13 @@ WindowManager::WindowManager() {
     if(!board.loadToolbarConfig("Toolbar.txt")){}
 
     createToolbar();
+
     displayWindow();
 }
 
-
+/// <summary>
+/// made a change
+/// </summary>
 void WindowManager::setupWindow() {
     const int minWidth = 800;          // Minimum window width
     const int minHeight = 600;         // Minimum window height
@@ -19,11 +22,14 @@ void WindowManager::setupWindow() {
 
     if (board.CheckExistFile()) {
         board.loadFromFile();
+        W = std::max(minWidth, board.getCols() * cellSize);
+        H = std::max(minHeight, toolbarHeight + board.getRows() * cellSize);
     }
     else {
         int width, height;
         std::cout << "Board file not found. Please enter the board dimensions:\n";
         board.clearData();
+
         do {
             std::cout << "Width (positive integer): ";
             std::cin >> width;
@@ -34,15 +40,16 @@ void WindowManager::setupWindow() {
             std::cin >> height;
         } while (height <= 0);
 
+        W = std::max(minWidth, width * cellSize);
+        H = std::max(minHeight, toolbarHeight + height * cellSize);
         board.initializeBoard(width, height, W, H);
     }
      
     // Calculate window dimensions
-    W = std::max(minWidth, board.getCols() * cellSize);
-    H = std::max(minHeight, toolbarHeight + board.getRows() * cellSize);
+    
 
     cellWidth = (static_cast<float>(W)) / board.getCols();
-    cellHeight = (static_cast<float>(H)) / board.getRows();
+    cellHeight = ((static_cast<float>(H)) - toolbarHeight) / board.getRows();
 
     // Create the window
     m_window.create(sf::VideoMode(W, H), "Board Editor");
@@ -80,9 +87,9 @@ void WindowManager::displayWindow() {
                 break;
 
             case sf::Event::MouseMoved:
-                if (event.mouseMove.y > 50) {  // Check mouse position relative to toolbar
-                    board.highlightCell(event.mouseMove.x, event.mouseMove.y, H, W);
-                }
+                   // Check mouse position relative to toolbar
+                    board.highlightCell(event.mouseMove.x, event.mouseMove.y, H, W, &getRenderWindow());
+                
                 break;
             }
         }
@@ -90,27 +97,45 @@ void WindowManager::displayWindow() {
 }
 
 
+
+/// <summary>
+/// made a change 
+/// </summary>
 void WindowManager::createToolbar() {
     toolbarTextures = board.loadTextures();  // Load textures from the Board class
 
-   // float spacing = 5.0f;  // Space between buttons
-   // float buttonWidth = (static_cast<float>(W) - (spacing * (board.getToolbarConfig().size() - 1))) / board.getToolbarConfig().size();
-    float buttonWidth = (static_cast<float>(W)) / 8;
-    float buttonHeight = getCellHeight();  // Height of toolbar buttons
+    float buttonWidth = static_cast<float>(W) / 8;
+    float buttonHeight = 50.0f;
 
     toolbar.clear();  // Clear previous toolbar buttons
 
+    // Check if textures loaded correctly
+    if (toolbarTextures.empty()) {
+        std::cerr << "No textures loaded for toolbar." << std::endl;
+        return;
+    }
+
     // Create toolbar buttons
-    for (int i = 0; i < board.getToolbarConfig().size(); ++i) {
+    for (size_t i = 0; i < board.getToolbarConfig().size(); ++i) {
         sf::RectangleShape button(sf::Vector2f(buttonWidth, buttonHeight));
-        button.setPosition(i * (buttonWidth), 0);  // Position buttons with spacing
-        button.setTexture(&toolbarTextures[i]);             // Set texture for each button
+        button.setFillColor(sf::Color::White);           // Set a default color for testing
+        button.setPosition(i * buttonWidth, 0);          // Position buttons with spacing
+
+        if (i < toolbarTextures.size()) {
+            button.setTexture(&toolbarTextures[i]);      // Bind the texture
+        }
+        else {
+            std::cerr << "Texture missing for button " << i << std::endl;
+        }
+
         button.setOutlineColor(sf::Color::White);
         button.setOutlineThickness(1);
 
         toolbar.push_back(button);  // Add button to the toolbar vector
     }
 }
+
+
 
 
 
@@ -129,4 +154,9 @@ float WindowManager::getCellWidth() const
 float WindowManager::getCellHeight() const
 {
     return cellHeight;
+}
+
+sf::RenderWindow& WindowManager::getRenderWindow() 
+{
+    return m_window;
 }
