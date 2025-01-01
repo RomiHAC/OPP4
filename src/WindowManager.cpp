@@ -155,7 +155,9 @@ float WindowManager::getCellHeight() const
 {
     return cellHeight;
 }
-
+//change \
+////
+////
 sf::RenderWindow& WindowManager::getRenderWindow() 
 {
     return m_window;
