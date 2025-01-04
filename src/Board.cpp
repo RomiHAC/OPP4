@@ -130,7 +130,7 @@ void Board::updateLocationRobot() {
 /// <param name="mouseY"></param>
 /// <param name="H"></param>
 /// <param name="W"></param>
-void Board::highlightCell(int mouseX, int mouseY, int H, int W)
+void Board::highlightCell(const int mouseX,const int mouseY,const int H,const int W)
 {
     static size_t lastHighlightedIndex = std::numeric_limits<size_t>::max(); // Track last highlighted cell
     // Consistent toolbar height
