@@ -22,9 +22,11 @@ public:
     bool CheckExistFile();
     void initializeBoard(int cols, int rows, int W, int H);
     void handleMouseClick(int mouseX, int mouseY, char selectedObject);
-    //added
-    void highlightCell(int mouseX, int mouseY, int H, int W);
-    //bool isRobotPresent();
+   
+   //added
+   /// <summary>
+   void highlightCell(const int mouseX,const int mouseY,const int H,const int W);
+   void updateLocationRobot();
     //
     void draw(sf::RenderWindow& window);
     sf::Texture* getTextureForObject(char selectedObject);
