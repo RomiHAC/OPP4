@@ -33,7 +33,7 @@ void Board::initializeBoard(int cols, int rows, int W, int H) {
     // Clear and resize grid
     grid.clear();
     grid.resize(static_cast<size_t>(m_width) * static_cast<size_t>(m_height));
-    
+
     // Initialize m_boardState
     m_boardState.clear();  // Clear old state
     m_boardState.resize(m_height, std::vector<char>(m_width, ' ')); // Default value
@@ -87,6 +87,60 @@ void Board::handleMouseClick(int mouseX, int mouseY, char selectedObject) {
     else {
         std::cerr << "Click out of bounds! Column: " << col << ", Row: " << row << "\n";
     }
+}
+
+
+/// <summary>
+/// added
+/// </summary>
+/// <param name="mouseX"></param>
+/// <param name="mouseY"></param>
+/// <param name="H"></param>
+/// <param name="W"></param>
+void Board::highlightCell(int mouseX, int mouseY, int H, int W)
+{
+    static size_t lastHighlightedIndex = std::numeric_limits<size_t>::max(); // Track last highlighted cell
+    // Consistent toolbar height
+    const float cellWidth = static_cast<float>(W) / m_width;  // Dynamically calculate cell width
+    const float cellHeight = ((static_cast<float>(H)) - TOOLBAR_HEIGHT) / m_height;  // Dynamic cell height 
+    const float adjustHeight = mouseY - TOOLBAR_HEIGHT;
+
+    int col = static_cast<int>(mouseX / cellWidth);
+    int row = static_cast<int>(adjustHeight / cellHeight);
+
+    std::cout << "Mouse Position: (" << mouseX << ", " << mouseY << ")" << std::endl;
+    std::cout << "Adjusted MouseY: " << adjustHeight << std::endl;
+    std::cout << "Cell Dimensions: (" << cellWidth << ", " << cellHeight << ")" << std::endl;
+    std::cout << "Target Cell: Column " << col << ", Row " << row << std::endl;
+
+    // Check if the mouse is within grid bounds
+    if (col >= 0 && col < m_width && row >= 0 && row < m_height) {
+        size_t currentIndex = getIndex(col, row);
+
+        if (lastHighlightedIndex != currentIndex) {
+            if (lastHighlightedIndex != std::numeric_limits<size_t>::max()) {
+                grid[lastHighlightedIndex].setFillColor(sf::Color::White); // Reset to default
+                std::cout << "Reset cell at index " << lastHighlightedIndex << " to white." << std::endl;
+            }
+
+            // Highlight the new cell
+            grid[currentIndex].setFillColor(sf::Color(200, 200, 200)); // Gray highlight
+            std::cout << "Highlighted cell at index " << currentIndex << "." << std::endl;
+
+            lastHighlightedIndex = currentIndex;  // Update last highlighted index
+        }
+    }
+    else {
+        if (lastHighlightedIndex != std::numeric_limits<size_t>::max()) {
+            grid[lastHighlightedIndex].setFillColor(sf::Color::White); // Reset to default
+            std::cout << "Mouse out of bounds. Reset cell at index " << lastHighlightedIndex << " to white." << std::endl;
+
+            lastHighlightedIndex = std::numeric_limits<size_t>::max(); // Reset tracker
+        }
+    }
+
+
+
 }
 
 //bool Board::isRobotPresent() {
@@ -145,9 +199,9 @@ bool Board::loadFromFile(int windowWidth, int windowHeight) {
     // Initialize board dimensions and m_boardState
     initializeBoard(m_width, m_height, windowWidth, windowHeight);
 
-    for (int row = 0; row < m_height; ++row) 
+    for (int row = 0; row < m_height; ++row)
     {
-        for (int col = 0; col < m_width; ++col) 
+        for (int col = 0; col < m_width; ++col)
         {
             char symbol;
             file >> symbol;
@@ -195,23 +249,23 @@ void Board::initializeTextures() {
 sf::Texture* Board::getTextureForObject(char selectedObject) {
 
 
-        if (selectedObject == '/') {
-			return &robotTexture;
-		}
-		else if (selectedObject == '!') {
-			return &guardTexture;
-		}
-		else if (selectedObject == 'D') {
-			return &doorTexture;
-		}
-		else if (selectedObject == '#') {
-			return &wallTexture;
-		}
-		else if (selectedObject == '@') {
-			return &rockTexture;
-		}
-        else 
-            return nullptr;
+    if (selectedObject == '/') {
+        return &robotTexture;
+    }
+    else if (selectedObject == '!') {
+        return &guardTexture;
+    }
+    else if (selectedObject == 'D') {
+        return &doorTexture;
+    }
+    else if (selectedObject == '#') {
+        return &wallTexture;
+    }
+    else if (selectedObject == '@') {
+        return &rockTexture;
+    }
+    else
+        return nullptr;
 }
 
 bool Board::CheckExistFile() {
