@@ -97,7 +97,7 @@ void WindowManager::displayWindow() {
                         //logic
                     }
                     if (m_currentToolChar == 'r') {
-                        //logic
+                        m_currentToolChar = ' ';
                     }
                     std::cout << "Selected tool is in toolbar: " << m_currentToolChar << std::endl;
                 }
