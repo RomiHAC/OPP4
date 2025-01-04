@@ -10,7 +10,7 @@ Toolbar::Toolbar()
 Toolbar::Toolbar(const std::string& configFile, int windowWidth, float cellHeight)
     : m_toolbarWidth(windowWidth), m_toolbarHeight(cellHeight), m_customCursor(nullptr) {
     if (loadConfig(configFile)) {
-        createToolbar(windowWidth, cellHeight);  
+        createToolbar(windowWidth, cellHeight);
     }
 }
 
@@ -52,7 +52,7 @@ std::vector<sf::Texture> Toolbar::loadTextures() {
 
     for (const auto& name : toolbarConfig) {
         sf::Texture texture;
-        std::string filepath = name + ".png";  
+        std::string filepath = name + ".png";
 
         if (texture.loadFromFile(filepath)) {
             textures.push_back(std::move(texture));
@@ -68,7 +68,7 @@ std::vector<sf::Texture> Toolbar::loadTextures() {
 
 void Toolbar::draw(sf::RenderWindow& window) const {
     for (const auto& button : buttons) {
-        window.draw(button); 
+        window.draw(button);
     }
 }
 
@@ -94,7 +94,7 @@ void Toolbar::createToolbar(int windowWidth, float cellHeight) {
 
 char Toolbar::handleToolbarClick(int mouseX, sf::RenderWindow& window) {
     char selectedObject = ' ';
-    int buttonIndex = mouseX / (m_toolbarWidth / buttons.size());  
+    int buttonIndex = mouseX / (m_toolbarWidth / buttons.size());
     if (buttonIndex >= 0 && buttonIndex < buttons.size()) {
         std::cout << "Clicked on toolbar button index: " << buttonIndex << std::endl;
         std::cout << "Button name: " << toolbarConfig[buttonIndex] << std::endl;
@@ -103,20 +103,20 @@ char Toolbar::handleToolbarClick(int mouseX, sf::RenderWindow& window) {
 
     if (buttonIndex >= 0 && buttonIndex < (toolbarTextures.size())) {
         unsigned int buttonWidth = m_toolbarWidth / buttons.size();
-        unsigned int buttonHeight = m_toolbarHeight;  
+        unsigned int buttonHeight = m_toolbarHeight;
 
 
         if (m_customCursor) {
-            delete m_customCursor; 
+            delete m_customCursor;
         }
 
         sf::Texture cursorTexture;
-        cursorTexture.loadFromImage(toolbarTextures[buttonIndex].copyToImage());  
+        cursorTexture.loadFromImage(toolbarTextures[buttonIndex].copyToImage());
 
-     
+
         sf::Image cursorImage = cursorTexture.copyToImage();
         sf::Image resizedImage;
-        resizedImage.create(buttonWidth, buttonHeight, sf::Color::Transparent);  
+        resizedImage.create(buttonWidth, buttonHeight, sf::Color::Transparent);
 
         for (unsigned int y = 0; y < buttonHeight; ++y) {
             for (unsigned int x = 0; x < buttonWidth; ++x) {
@@ -139,30 +139,30 @@ char Toolbar::handleToolbarClick(int mouseX, sf::RenderWindow& window) {
         }
     }
 
-        if (toolbarConfig[buttonIndex] == "ROBOT") {
-            selectedObject = '/';
-        }
-        else if (toolbarConfig[buttonIndex] == "GUARD") {
-            selectedObject = '!';
-        }
-        else if (toolbarConfig[buttonIndex] == "DOOR") {
-            selectedObject = 'D';
-        }
-        else if (toolbarConfig[buttonIndex] == "WALL") {
-            selectedObject = '#';
-        }
-        else if (toolbarConfig[buttonIndex] == "ROCK") {
-            selectedObject = '@';
-        }
-        else if (toolbarConfig[buttonIndex] == "SAVE") {
-            selectedObject = 's';
-        }
-        else if (toolbarConfig[buttonIndex] == "DELETE") {
-            selectedObject = 'd';
-        }
-        else if (toolbarConfig[buttonIndex] == "REMOVE") {
-            selectedObject = 'r';
-        }
+    if (toolbarConfig[buttonIndex] == "ROBOT") {
+        selectedObject = '/';
+    }
+    else if (toolbarConfig[buttonIndex] == "GUARD") {
+        selectedObject = '!';
+    }
+    else if (toolbarConfig[buttonIndex] == "DOOR") {
+        selectedObject = 'D';
+    }
+    else if (toolbarConfig[buttonIndex] == "WALL") {
+        selectedObject = '#';
+    }
+    else if (toolbarConfig[buttonIndex] == "ROCK") {
+        selectedObject = '@';
+    }
+    else if (toolbarConfig[buttonIndex] == "SAVE") {
+        selectedObject = 's';
+    }
+    else if (toolbarConfig[buttonIndex] == "DELETE") {
+        selectedObject = 'd';
+    }
+    else if (toolbarConfig[buttonIndex] == "REMOVE") {
+        selectedObject = 'r';
+    }
     return selectedObject;
 }
 
