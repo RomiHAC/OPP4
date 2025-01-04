@@ -15,7 +15,7 @@ void WindowManager::setupWindow() {
     const int cellSize = 32;           // Size of each board cell
 
     if (m_board.CheckExistFile()) {
-    
+
         m_windowWidth = std::max(minWidth, m_board.getCols() * cellSize);
         m_windowHeight = std::max(minHeight, static_cast<int>(TOOLBAR_HEIGHT) + m_board.getRows() * cellSize);
         m_board.loadFromFile(m_windowWidth, m_windowHeight);
@@ -69,6 +69,7 @@ void WindowManager::displayWindow() {
 
         sf::Event event;
         while (m_window.pollEvent(event)) {
+           
             switch (event.type) {
             case sf::Event::Closed:
                 m_window.close();
@@ -77,8 +78,10 @@ void WindowManager::displayWindow() {
             case sf::Event::MouseButtonReleased:
                 if (event.mouseButton.y > TOOLBAR_HEIGHT) {  // Check mouse position relative to toolbar
                     m_board.handleMouseClick(event.mouseButton.x, event.mouseButton.y, m_currentToolChar);
+                    clickONtoolbar = false;
                 }
                 else {  // Toolbar area
+                    clickONtoolbar = true;
                     m_currentToolChar = m_toolbar.handleToolbarClick(event.mouseButton.x, m_window);
 
                     if (m_currentToolChar == 's') {
@@ -88,12 +91,12 @@ void WindowManager::displayWindow() {
                         }
                         else {
                             std::cerr << "Failed to save the board.\n";
-                        }   
+                        }
                     }
                     if (m_currentToolChar == 'd') {
                         //logic
                     }
-                    if (m_currentToolChar == 'r' ){
+                    if (m_currentToolChar == 'r') {
                         //logic
                     }
                     std::cout << "Selected tool is in toolbar: " << m_currentToolChar << std::endl;
@@ -101,8 +104,21 @@ void WindowManager::displayWindow() {
                 break;
 
             case sf::Event::MouseMoved:
+               
                 if (event.mouseMove.y > TOOLBAR_HEIGHT) {  // Ensure mouse movement is below the toolbar
-                    // board.highlightCell(event.mouseMove.x, event.mouseMove.y, m_windowHeight, m_W, m_cellHeight);
+                     
+                    if (!clickONtoolbar) {
+                        changeMouse(event.mouseMove.y > TOOLBAR_HEIGHT);
+                    }
+                    m_board.highlightCell(event.mouseMove.x, event.mouseMove.y, m_windowHeight, m_windowWidth);
+                }
+                else {
+                    if (!clickONtoolbar) {
+                        changeMouse(event.mouseMove.y > TOOLBAR_HEIGHT);
+                    }
+
+                   
+                    
                 }
                 break;
             }
@@ -117,3 +133,28 @@ float WindowManager::getCellWidth() const {
 float WindowManager::getCellHeight() const {
     return m_cellHeight;
 }
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="aboveToolbar"></param>
+void WindowManager::changeMouse(bool aboveToolbar) 
+{
+    
+    if (aboveToolbar) {
+        sf::Cursor defaultCursor;
+        if (defaultCursor.loadFromSystem(sf::Cursor::Arrow)) {
+            m_window.setMouseCursor(defaultCursor); // Reset cursor to default
+        }
+    }
+    else {
+        sf::Cursor customCursor;
+        if (customCursor.loadFromSystem(sf::Cursor::Hand)) {
+           
+            m_window.setMouseCursor(customCursor); // Set custom cursor
+
+        }
+    }
+}
+
+
