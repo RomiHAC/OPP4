@@ -16,11 +16,11 @@ public:
 
 private:
 
-    std::vector<std::string> toolbarConfig;  
-    std::vector<sf::Texture> toolbarTextures; 
-    std::vector<sf::RectangleShape> buttons;  
-    std::vector<sf::RectangleShape> toolbar;  
-    std::vector<std::string> objectTypes;  
+    std::vector<std::string> toolbarConfig;
+    std::vector<sf::Texture> toolbarTextures;
+    std::vector<sf::RectangleShape> buttons;
+    std::vector<sf::RectangleShape> toolbar;
+    std::vector<std::string> objectTypes;
 
     int m_toolbarWidth;         // Width of the toolbar
     int m_toolbarHeight;        // Height of the toolbar
