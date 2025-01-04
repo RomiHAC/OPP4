@@ -1,9 +1,8 @@
 #include <SFML/Graphics.hpp>
-#include "DRAW.h"
+#include "WindowManager.h"
 
 int main() {
     WindowManager window; // Example dimensions
- 
+
     return 0;
 }
-
