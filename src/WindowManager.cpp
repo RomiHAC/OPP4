@@ -18,7 +18,7 @@ void WindowManager::setupWindow() {
     
         m_windowWidth = std::max(minWidth, m_board.getCols() * cellSize);
         m_windowHeight = std::max(minHeight, static_cast<int>(TOOLBAR_HEIGHT) + m_board.getRows() * cellSize);
-        m_board.loadFromFile(m_windowWidth, m_windowWidth);
+        m_board.loadFromFile(m_windowWidth, m_windowHeight);
     }
     else {
         int width, height;
