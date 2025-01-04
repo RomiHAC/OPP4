@@ -3,55 +3,54 @@
 #include <fstream>
 #include <iostream>
 #include <SFML/Graphics.hpp>
-
+const float TOOLBAR_HEIGHT = 150.f; // Height of the toolbarHeight
+const int NUMBER_OF_OBJECTS = 5;
 enum Object {
-    ROBOT, GUARD, DOOR, WALL, ROCK, SAVE,
-    DELETE, REMOVE
+     SAVE = NUMBER_OF_OBJECTS,
+    DELETE,
+    REMOVE,
+    EMPTY
 };
 
 class Board {
 public:
     Board();
     Board(int width, int height);
-
     void clearData();
-
     bool saveToFile() const;
-    bool loadFromFile();
+    bool loadFromFile(int windowWidth, int windowHeight);
     bool CheckExistFile();
-
-    bool loadToolbarConfig(const std::string& filepath);
-
-    std::vector<sf::Texture> loadTextures();
     void initializeBoard(int cols, int rows, int W, int H);
-   
-    void handleMouseClick(int mouseX, int mouseY, Object selectedObject);
-    bool checkToolbarHover(int mouseX, int mouseY, int toolbarHeight);
-    void highlightCell(int mouseX, int mouseY, int H, int W, sf::RenderWindow* window);
-    sf::Color getColorForObject(Object obj);
+    void handleMouseClick(int mouseX, int mouseY, char selectedObject);
+  //  void highlightCell(int mouseX, int mouseY, int H, int W, float toolbarHeight);
     bool isRobotPresent();
-
     void draw(sf::RenderWindow& window);
+    sf::Texture* getTextureForObject(char selectedObject);
+    void initializeTextures();
 
-    int getRows() const { return height; }
-    int getCols() const { return width; }
-    const std::vector<std::string>& getToolbarConfig() const { return toolbarConfig; }
 
+    int getRows() const;
+    int getCols() const;
 
 private:
-    int width = 0;
-    int height = 0;
+    std::vector<std::vector<char>> m_boardState; 
+    std::vector<sf::Texture> m_objectTextures; 
+    int m_width;
+    int m_height;
+    //float m_toolbarHeight;
+    float m_offsetX;
+    float m_offsetY;
     std::vector<sf::RectangleShape> grid;
     const std::string BOARD_FILE = "Board.txt";
-
-    std::vector<std::string> toolbarConfig; // Store toolbar configuration
-    
     size_t getIndex(int x, int y) const;
-
-    /// <summary>
-    /// chnage 
-    /// </summary>
-   
-    bool isToolbarAreaHovered = false;
+    bool countRowsAndCols();
+    std::vector<sf::Texture> m_textures;
+    std::vector<std::string> toolbarConfig;
+    // Texture objects for different objects
+    sf::Texture robotTexture;
+    sf::Texture guardTexture;
+    sf::Texture doorTexture;
+    sf::Texture wallTexture;
+    sf::Texture rockTexture;
 
 };
