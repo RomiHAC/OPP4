@@ -3,10 +3,10 @@
 #include <fstream>
 #include <iostream>
 #include <SFML/Graphics.hpp>
-const float TOOLBAR_HEIGHT = 150.f; // Height of the toolbarHeight
+const float TOOLBAR_HEIGHT = 50.f; // Height of the toolbarHeight
 const int NUMBER_OF_OBJECTS = 5;
 enum Object {
-     SAVE = NUMBER_OF_OBJECTS,
+    SAVE = NUMBER_OF_OBJECTS,
     DELETE,
     REMOVE,
     EMPTY
@@ -22,8 +22,10 @@ public:
     bool CheckExistFile();
     void initializeBoard(int cols, int rows, int W, int H);
     void handleMouseClick(int mouseX, int mouseY, char selectedObject);
-  //  void highlightCell(int mouseX, int mouseY, int H, int W, float toolbarHeight);
-    bool isRobotPresent();
+    //added
+    void highlightCell(int mouseX, int mouseY, int H, int W);
+    //bool isRobotPresent();
+    //
     void draw(sf::RenderWindow& window);
     sf::Texture* getTextureForObject(char selectedObject);
     void initializeTextures();
@@ -33,8 +35,8 @@ public:
     int getCols() const;
 
 private:
-    std::vector<std::vector<char>> m_boardState; 
-    std::vector<sf::Texture> m_objectTextures; 
+    std::vector<std::vector<char>> m_boardState;
+    std::vector<sf::Texture> m_objectTextures;
     int m_width;
     int m_height;
     //float m_toolbarHeight;
