@@ -1,176 +1,102 @@
 #include "Board.h"
 
-Board::Board() : width(10), height(10) {
-    grid.resize(static_cast<size_t>(width) * static_cast<size_t>(height));
+Board::Board() : m_width(10), m_height(10) {
+    initializeTextures();
+    grid.resize(static_cast<size_t>(m_width) * static_cast<size_t>(m_height));
+    // Initialize m_boardState with default values (Object::DELETE)
+    m_boardState.resize(m_height, std::vector<char>(m_width, ' '));
 }
 
-Board::Board(int width, int height) : width(width), height(height) {
+Board::Board(int width, int height) : m_width(width), m_height(height) {
+    initializeTextures();
     grid.resize(static_cast<size_t>(width) * static_cast<size_t>(height));
+    // Initialize m_boardState with default values (Object::DELETE)
+    m_boardState.resize(m_height, std::vector<char>(m_width, ' '));
 }
 
 size_t Board::getIndex(int x, int y) const {
-    return static_cast<size_t>(y) * static_cast<size_t>(width) + static_cast<size_t>(x);
+    return static_cast<size_t>(y) * static_cast<size_t>(m_width) + static_cast<size_t>(x);
 }
 
 void Board::clearData() {
     grid.clear();
-    width = 0;
-    height = 0;
+    m_boardState.clear();
+    m_width = 0;
+    m_height = 0;
 }
 
-
-/// <summary>
-/// made a change 
-/// </summary>
-/// <param name="cols"></param>
-/// <param name="rows"></param>
-/// <param name="W"></param>
-/// <param name="H"></param>
 void Board::initializeBoard(int cols, int rows, int W, int H) {
-    const float toolbarHeight = 50.0f;  // Toolbar height (make this consistent across your code)
-    width = cols;
-    height = rows;
+    //m_toolbarHeight = TOOLBAR_HEIGHT;
+    m_width = cols;
+    m_height = rows;
+    std::cout << "m_width: " << m_width << ", m_height: " << m_height << "\n";
+    // Clear and resize grid
     grid.clear();
-    grid.resize(static_cast<size_t>(width) * static_cast<size_t>(height));
+    grid.resize(static_cast<size_t>(m_width) * static_cast<size_t>(m_height));
+    
+    // Initialize m_boardState
+    m_boardState.clear();  // Clear old state
+    m_boardState.resize(m_height, std::vector<char>(m_width, ' ')); // Default value
 
     float cellW = static_cast<float>(W) / static_cast<float>(cols);
-    float cellH = (static_cast<float>(H) - toolbarHeight) / static_cast<float>(rows);
+    float cellH = (static_cast<float>(H) - TOOLBAR_HEIGHT) / static_cast<float>(rows);
 
-    for (int row = 0; row < height; ++row) {  // Start at row 0
-        for (int col = 0; col < width; ++col) {
+    for (int row = 0; row < m_height; ++row) {
+        for (int col = 0; col < m_width; ++col) {
             size_t index = getIndex(col, row);
             grid[index].setSize(sf::Vector2f(cellW, cellH));
-            grid[index].setPosition(col * cellW, row * cellH + toolbarHeight);  // Add toolbar offset to y-position
+            grid[index].setPosition(col * cellW, row * cellH + TOOLBAR_HEIGHT);
             grid[index].setFillColor(sf::Color::White);
             grid[index].setOutlineColor(sf::Color::Black);
             grid[index].setOutlineThickness(1.f);
         }
     }
 }
+void Board::handleMouseClick(int mouseX, int mouseY, char selectedObject) {
+    float cellWidth = grid[0].getSize().x; // Cell width
+    float cellHeight = grid[0].getSize().y; // Cell height
 
+    // Adjust mouseY to account for the toolbar
+    int adjustedMouseY = mouseY - TOOLBAR_HEIGHT;
 
-void Board::handleMouseClick(int mouseX, int mouseY, Object selectedObject) {
-    int col = mouseX / 32;  // גובה כל תא
-    int row = mouseY / 32;  // רוחב כל תא
+    int col = static_cast<int>(mouseX / cellWidth); // Calculate the column
+    int row = static_cast<int>(adjustedMouseY / cellHeight); // Calculate the row
 
-    if (col >= 0 && col < width && row >= 0 && row < height) {
+    if (col >= 0 && col < m_width && row >= 0 && row < m_height) {
         size_t index = getIndex(col, row);
 
-        auto textures = loadTextures();  // להטען הטקסטורות
-        if (selectedObject == Object::DELETE) {
-            grid[index].setFillColor(sf::Color::White);  // צבע רקע
+        if (selectedObject == ' ') {
+            grid[index].setFillColor(sf::Color::White); // Empty cell
+            grid[index].setTexture(nullptr); // Remove texture
+            m_boardState[row][col] = ' '; // Update board state to empty
         }
         else {
-            grid[index].setTexture(&textures[selectedObject]);  // להחיל טקסטורה
-        }
-    }
-}
-
-
-
-
-///----------------------------------------------
-bool Board::checkToolbarHover(int mouseX, int mouseY, int toolbarHeight) {
-    return mouseY < toolbarHeight;
-}
-
-/// <summary>
-/// made a change
-/// </summary>
-/// <param name="mouseX"></param>
-/// <param name="mouseY"></param>
-/// <param name="H"></param>
-/// <param name="W"></param>
-/// <param name="window"></param>
-void Board::highlightCell(int mouseX, int mouseY, int H, int W, sf::RenderWindow* window) {
-
-    static size_t lastHighlightedIndex = std::numeric_limits<size_t>::max(); // Track last highlighted cell
-    const float toolbarHeight = 50.0f;  // Consistent toolbar height
-    const float cellWidth = static_cast<float>(W) / width;  // Dynamically calculate cell width
-    const float cellHeight = ((static_cast<float>(H)) - toolbarHeight) / height;  // Dynamic cell height 
-    const float adjustHeight = mouseY - toolbarHeight;
-
-    sf::Cursor customCursor;
-    // Change cursor if mouse is in the toolbar area
-    if (checkToolbarHover(mouseX, mouseY, toolbarHeight)) {
-        if (!isToolbarAreaHovered) {
-            if (customCursor.loadFromSystem(sf::Cursor::Hand)) {
-                window->setMouseCursor(customCursor); // Set custom cursor
+            // Load the texture associated with the selected object
+            sf::Texture* texture = getTextureForObject(selectedObject);
+            if (texture) {
+                grid[index].setTexture(texture); // Set the new texture
+                m_boardState[row][col] = selectedObject; // Update board state
             }
-            isToolbarAreaHovered = true;
-        }
-        return; // No highlighting if in toolbar area
-    }
-    else {
-        if (isToolbarAreaHovered) {
-            sf::Cursor defaultCursor;
-            if (defaultCursor.loadFromSystem(sf::Cursor::Arrow)) {
-                window->setMouseCursor(defaultCursor); // Reset cursor to default
+            else {
+                grid[index].setTexture(nullptr); // Clear any existing texture
+                std::cerr << "Error: Texture not found for the selected object.\n";
+                m_boardState[row][col] = ' '; // Update board state to empty
             }
-            isToolbarAreaHovered = false;
-        }
-    }
-
-
-
-    int col = static_cast<int>(mouseX / cellWidth);
-    int row = static_cast<int>(adjustHeight / cellHeight);
-
-    std::cout << "Mouse Position: (" << mouseX << ", " << mouseY << ")" << std::endl;
-    std::cout << "Adjusted MouseY: " << adjustHeight << std::endl;
-    std::cout << "Cell Dimensions: (" << cellWidth << ", " << cellHeight << ")" << std::endl;
-    std::cout << "Target Cell: Column " << col << ", Row " << row << std::endl;
-
-    // Check if the mouse is within grid bounds
-    if (col >= 0 && col < width && row >= 0 && row < height) {
-        size_t currentIndex = getIndex(col, row);
-
-        if (lastHighlightedIndex != currentIndex) {
-            if (lastHighlightedIndex != std::numeric_limits<size_t>::max()) {
-                grid[lastHighlightedIndex].setFillColor(sf::Color::White); // Reset to default
-                std::cout << "Reset cell at index " << lastHighlightedIndex << " to white." << std::endl;
-            }
-
-            // Highlight the new cell
-            grid[currentIndex].setFillColor(sf::Color(200, 200, 200)); // Gray highlight
-            std::cout << "Highlighted cell at index " << currentIndex << "." << std::endl;
-
-            lastHighlightedIndex = currentIndex;  // Update last highlighted index
         }
     }
     else {
-        if (lastHighlightedIndex != std::numeric_limits<size_t>::max()) {
-            grid[lastHighlightedIndex].setFillColor(sf::Color::White); // Reset to default
-            std::cout << "Mouse out of bounds. Reset cell at index " << lastHighlightedIndex << " to white." << std::endl;
-
-            lastHighlightedIndex = std::numeric_limits<size_t>::max(); // Reset tracker
-        }
+        std::cerr << "Click out of bounds! Column: " << col << ", Row: " << row << "\n";
     }
 }
 
-
-
-
-
-sf::Color Board::getColorForObject(Object obj) {
-    switch (obj) {
-    case ROBOT: return sf::Color::Blue;    
-    case GUARD: return sf::Color::Green;    
-    case WALL: return sf::Color::Black;     
-    case ROCK: return sf::Color::Yellow;   
-    case DOOR: return sf::Color::Red;       
-    default: return sf::Color::White;       
-    }
-}
-
-
-
-bool Board::isRobotPresent() {
-    for (const auto& cell : grid) {
-        if (cell.getFillColor() == sf::Color::Blue) return true;
-    }
-    return false;
-}
+//bool Board::isRobotPresent() {
+//    for (const auto& row : m_boardState) {
+//        for (const auto& cell : row) {
+//            if (cell == Object::ROBOT) return true;
+//        }
+//    }
+//    return false;
+//}
 
 void Board::draw(sf::RenderWindow& window) {
     for (const auto& cell : grid) {
@@ -178,50 +104,114 @@ void Board::draw(sf::RenderWindow& window) {
     }
 }
 
-bool Board::saveToFile() const {
-    std::ofstream file(BOARD_FILE);
+
+bool Board::countRowsAndCols() {
+    std::ifstream file(BOARD_FILE);
     if (!file.is_open()) {
-        std::cerr << "Cannot open " << BOARD_FILE << " for writing!\n";
+        std::cerr << "Cannot open file: " << BOARD_FILE << std::endl;
         return false;
     }
 
-    file << height << " " << width << "\n";
+    std::string line;
+    m_height = 0;
+    m_width = 0;
 
-    for (int row = 0; row < height; ++row) {
-        for (int col = 0; col < width; ++col) {
-            size_t index = getIndex(col, row);
-            file << grid[index].getFillColor().toInteger() << " ";
+    // Read the file line by line
+    while (std::getline(file, line)) {
+        m_height++;  // Increment row count
+
+        if (m_height == 1) {
+            // The first row defines the number of columns
+            m_width = line.length();
         }
-        file << "\n";
+        //else if (line.length() != cols) {
+        //    // Handle inconsistent column lengths
+        //    std::cerr << "Warning: Inconsistent number of columns in row " << rows << std::endl;
+        //}
     }
-
+    std::cout << "Rows: " << m_height << ", Cols: " << m_width << "\n";
+    file.close();
     return true;
 }
 
-bool Board::loadFromFile() {
+bool Board::loadFromFile(int windowWidth, int windowHeight) {
     std::ifstream file(BOARD_FILE);
-    if (!file.is_open()) {
-        std::cerr << "Cannot open " << BOARD_FILE << " for reading!\n";
+    if (!countRowsAndCols()) {
         return false;
     }
+    ;
+    std::cout << "m_width: " << windowWidth << ", m_height: " << windowHeight << "\n";
 
-    int rows, cols;
-    file >> rows >> cols;
-    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    // Initialize board dimensions and m_boardState
+    initializeBoard(m_width, m_height, windowWidth, windowHeight);
 
-    initializeBoard(cols, rows, cols * 32, rows * 32);
+    for (int row = 0; row < m_height; ++row) 
+    {
+        for (int col = 0; col < m_width; ++col) 
+        {
+            char symbol;
+            file >> symbol;
+            m_boardState[row][col] = symbol;
 
-    for (int row = 0; row < height; ++row) {
-        for (int col = 0; col < width; ++col) {
+            // Set the texture and color for the grid cell
             size_t index = getIndex(col, row);
-            int colorInt;
-            file >> colorInt;
-            sf::Color cellColor(colorInt);
-            grid[index].setFillColor(cellColor);
+            if (m_boardState[row][col] == ' ') {
+                grid[index].setFillColor(sf::Color::White);
+                grid[index].setTexture(nullptr);
+            }
+            else {
+                sf::Texture* texture = getTextureForObject(m_boardState[row][col]);
+                if (texture) {
+                    grid[index].setTexture(nullptr); // Clear the existing texture
+                    grid[index].setTexture(texture); // Set the new texture
+                }
+                else {
+                    std::cerr << "Error: Invalid texture for object type " << symbol << ".\n";
+                }
+            }
         }
     }
+    return true; // Move the return statement here
+}
 
-    return true;
+void Board::initializeTextures() {
+    if (!robotTexture.loadFromFile("Robot.png")) {
+        std::cerr << "Failed to load robot texture\n";
+    }
+    if (!guardTexture.loadFromFile("Guard.png")) {
+        std::cerr << "Failed to load guard texture\n";
+    }
+    if (!doorTexture.loadFromFile("Door.png")) {
+        std::cerr << "Failed to load door texture\n";
+    }
+    if (!wallTexture.loadFromFile("Wall.png")) {
+        std::cerr << "Failed to load wall texture\n";
+    }
+    if (!rockTexture.loadFromFile("Rock.png")) {
+        std::cerr << "Failed to load rock texture\n";
+    }
+}
+
+sf::Texture* Board::getTextureForObject(char selectedObject) {
+
+
+        if (selectedObject == '/') {
+			return &robotTexture;
+		}
+		else if (selectedObject == '!') {
+			return &guardTexture;
+		}
+		else if (selectedObject == 'D') {
+			return &doorTexture;
+		}
+		else if (selectedObject == '#') {
+			return &wallTexture;
+		}
+		else if (selectedObject == '@') {
+			return &rockTexture;
+		}
+        else 
+            return nullptr;
 }
 
 bool Board::CheckExistFile() {
@@ -229,61 +219,31 @@ bool Board::CheckExistFile() {
     return checkFile.good();
 }
 
-bool Board::loadToolbarConfig(const std::string& filepath) {
-    std::ifstream file(filepath);
-    if (!file.is_open()) {
-        std::cerr << "Cannot open toolbar configuration file: " << filepath << "\n";
+int Board::getRows() const {
+    return m_height;
+}
+
+int Board::getCols() const {
+    return m_width;
+}
+
+bool Board::saveToFile() const {
+    std::ofstream outFile(BOARD_FILE);
+    if (!outFile.is_open()) {
+        std::cerr << "Error: Could not open file " << BOARD_FILE << " for saving the board.\n";
         return false;
     }
 
-    std::string line;
-    while (std::getline(file, line)) {
-        for (char c : line) {
-            // Map the character to a corresponding filename
-            switch (c) {
-            case '/': toolbarConfig.push_back("ROBOT"); break;
-            case '!': toolbarConfig.push_back("GUARD"); break;
-            case 'D': toolbarConfig.push_back("DOOR"); break;
-            case '#': toolbarConfig.push_back("WALL"); break;
-            case '@': toolbarConfig.push_back("ROCK"); break;
-            default:
-                std::cerr << "Unknown toolbar character: " << c << "\n";
-                break;
-            }
+    // Iterate through the board and save the corresponding character for each object
+    for (int row = 0; row < m_height; ++row) {
+        for (int col = 0; col < m_width; ++col) {
+            outFile << m_boardState[row][col];
+            std::cout << m_boardState[row][col] << " ";
         }
+        std::cout << "\n";
+        outFile << '\n';  // New line after each row
     }
-    
-    file.close();
-    toolbarConfig.push_back("SAVE");
-    toolbarConfig.push_back("DELETE");
-    toolbarConfig.push_back("REMOVE");
+
+    outFile.close();
     return true;
-}
-
-
-/// <summary>
-/// made a change
-/// </summary>
-/// <returns></returns>
-std::vector<sf::Texture> Board::loadTextures() {
-    std::vector<sf::Texture> textures;
-
-    std::cout << toolbarConfig.size() << std::endl;
-
-    for (const auto& name : toolbarConfig) {
-        sf::Texture texture;
-        std::string filepath = name + ".png";
-
-        if (texture.loadFromFile(filepath)) {
-            texture.setSmooth(true);  // Enable smoothing for better visual appearance
-            textures.push_back(std::move(texture));
-            std::cout << "Loaded Texture: " << filepath << std::endl;
-        }
-
-        else {
-            std::cerr << "Failed to load image: " << filepath << std::endl;
-        }
-    }
-
-    return textures;
 }
