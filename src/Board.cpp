@@ -52,6 +52,15 @@ void Board::initializeBoard(int cols, int rows, int W, int H) {
         }
     }
 }
+
+
+/// <summary>
+/// added
+/// </summary>
+/// <param name="mouseX"></param>
+/// <param name="mouseY"></param>
+/// <param name="H"></param>
+/// <param name="W"></param>
 void Board::handleMouseClick(int mouseX, int mouseY, char selectedObject) {
     float cellWidth = grid[0].getSize().x; // Cell width
     float cellHeight = grid[0].getSize().y; // Cell height
@@ -70,10 +79,13 @@ void Board::handleMouseClick(int mouseX, int mouseY, char selectedObject) {
             grid[index].setTexture(nullptr); // Remove texture
             m_boardState[row][col] = ' '; // Update board state to empty
         }
-        else {
+        else if(m_boardState[row][col] == ' ') {
             // Load the texture associated with the selected object
             sf::Texture* texture = getTextureForObject(selectedObject);
             if (texture) {
+                if (selectedObject == '/') {
+                    updateLocationRobot();
+                }
                 grid[index].setTexture(texture); // Set the new texture
                 m_boardState[row][col] = selectedObject; // Update board state
             }
@@ -86,6 +98,27 @@ void Board::handleMouseClick(int mouseX, int mouseY, char selectedObject) {
     }
     else {
         std::cerr << "Click out of bounds! Column: " << col << ", Row: " << row << "\n";
+    }
+}
+
+
+/// <summary>
+/// added
+/// </summary>
+/// <param name="mouseX"></param>
+/// <param name="mouseY"></param>
+/// <param name="H"></param>
+/// <param name="W"></param>
+void Board::updateLocationRobot() {
+    for (size_t row = 0; row < m_boardState.size(); ++row) {  // Loop through rows
+        for (size_t col = 0; col < m_boardState[row].size(); ++col) {  // Loop through columns
+            if (m_boardState[row][col] == '/') {
+                m_boardState[row][col] = ' ';
+                size_t index = getIndex(static_cast<int>(col), static_cast<int>(row));
+                grid[index].setFillColor(sf::Color::White); // Empty cell
+                grid[index].setTexture(nullptr);
+            }
+        }
     }
 }
 
@@ -143,14 +176,7 @@ void Board::highlightCell(int mouseX, int mouseY, int H, int W)
 
 }
 
-//bool Board::isRobotPresent() {
-//    for (const auto& row : m_boardState) {
-//        for (const auto& cell : row) {
-//            if (cell == Object::ROBOT) return true;
-//        }
-//    }
-//    return false;
-//}
+
 
 void Board::draw(sf::RenderWindow& window) {
     for (const auto& cell : grid) {
