@@ -1,34 +1,29 @@
-#include "Draw.h"
+#include "WindowManager.h"
 #include <iostream>
 
-WindowManager::WindowManager() {
+WindowManager::WindowManager() : m_windowWidth(800), m_windowHeight(600), m_cellWidth(0.f), m_cellHeight(0.f), m_currentToolIndex(0) {
     setupWindow();
-
-    if(!board.loadToolbarConfig("Toolbar.txt")){}
-
-    createToolbar();
-
+    Toolbar gameToolbar("Toolbar.txt", m_windowWidth, TOOLBAR_HEIGHT);
+    m_toolbar = gameToolbar;
+    m_objectOrder = m_toolbar.getToolbarConfig();
     displayWindow();
 }
 
-/// <summary>
-/// made a change
-/// </summary>
 void WindowManager::setupWindow() {
-    const int minWidth = 800;          // Minimum window width
-    const int minHeight = 600;         // Minimum window height
+    const int minWidth = 1200;          // Minimum window width
+    const int minHeight = 1000;         // Minimum window height
     const int cellSize = 32;           // Size of each board cell
-    const int toolbarHeight = 50;      // Height of the toolbar
 
-    if (board.CheckExistFile()) {
-        board.loadFromFile();
-        W = std::max(minWidth, board.getCols() * cellSize);
-        H = std::max(minHeight, toolbarHeight + board.getRows() * cellSize);
+    if (m_board.CheckExistFile()) {
+    
+        m_windowWidth = std::max(minWidth, m_board.getCols() * cellSize);
+        m_windowHeight = std::max(minHeight, static_cast<int>(TOOLBAR_HEIGHT) + m_board.getRows() * cellSize);
+        m_board.loadFromFile(m_windowWidth, m_windowWidth);
     }
     else {
         int width, height;
         std::cout << "Board file not found. Please enter the board dimensions:\n";
-        board.clearData();
+        m_board.clearData();
 
         do {
             std::cout << "Width (positive integer): ";
@@ -40,35 +35,37 @@ void WindowManager::setupWindow() {
             std::cin >> height;
         } while (height <= 0);
 
-        W = std::max(minWidth, width * cellSize);
-        H = std::max(minHeight, toolbarHeight + height * cellSize);
-        board.initializeBoard(width, height, W, H);
+        m_windowWidth = std::max(minWidth, width * cellSize);
+        m_windowHeight = std::max(minHeight, static_cast<int>(TOOLBAR_HEIGHT) + height * cellSize);
+        m_board.initializeBoard(width, height, m_windowWidth, m_windowHeight);
     }
-     
-    // Calculate window dimensions
-    
 
-    cellWidth = (static_cast<float>(W)) / board.getCols();
-    cellHeight = ((static_cast<float>(H)) - toolbarHeight) / board.getRows();
+    // Validate window dimensions before creating the window
+    if (m_windowWidth <= 0 || m_windowHeight <= 0) {
+        std::cerr << "Error: Invalid window dimensions. Window creation failed." << std::endl;
+        return;  // Exit if invalid dimensions
+    }
 
-    // Create the window
-    m_window.create(sf::VideoMode(W, H), "Board Editor");
+    // Calculate cell dimensions
+    m_cellWidth = (static_cast<float>(m_windowWidth)) / m_board.getCols();
+    m_cellHeight = ((static_cast<float>(m_windowHeight)) - TOOLBAR_HEIGHT) / m_board.getRows();
+
+    // Create the window with validated dimensions
+    m_window.create(sf::VideoMode(m_windowWidth, m_windowHeight), "Board Editor");
+
+    // Check if the window was created successfully
+    if (!m_window.isOpen()) {
+        std::cerr << "Error: Failed to create window." << std::endl;
+        return;  // Exit if window creation failed
+    }
 }
-
 
 void WindowManager::displayWindow() {
     while (m_window.isOpen()) {
-        m_window.clear();  // Clear the window
-
-        // Draw the board
-        board.draw(m_window);
-
-        // Draw the toolbar
-        for (const auto& button : toolbar) {
-            m_window.draw(button);
-        }
-
-        m_window.display();  // Show everything we've drawn so far
+        m_window.clear();
+        m_board.draw(m_window);
+        m_toolbar.draw(m_window);
+        m_window.display();
 
         sf::Event event;
         while (m_window.pollEvent(event)) {
@@ -78,85 +75,45 @@ void WindowManager::displayWindow() {
                 break;
 
             case sf::Event::MouseButtonReleased:
-                if (event.mouseButton.y > 50) {  // Check mouse position relative to toolbar
-                    board.handleMouseClick(event.mouseButton.x, event.mouseButton.y - 50, currentTool);
+                if (event.mouseButton.y > TOOLBAR_HEIGHT) {  // Check mouse position relative to toolbar
+                    m_board.handleMouseClick(event.mouseButton.x, event.mouseButton.y, m_currentToolChar);
                 }
                 else {  // Toolbar area
-                    handleToolbarClick(event.mouseButton.x);
+                    m_currentToolChar = m_toolbar.handleToolbarClick(event.mouseButton.x, m_window);
+
+                    if (m_currentToolChar == 's') {
+                        // Save the board to a file
+                        if (m_board.saveToFile()) {
+                            std::cout << "Board saved successfully!\n";
+                        }
+                        else {
+                            std::cerr << "Failed to save the board.\n";
+                        }   
+                    }
+                    if (m_currentToolChar == 'd') {
+                        //logic
+                    }
+                    if (m_currentToolChar == 'r' ){
+                        //logic
+                    }
+                    std::cout << "Selected tool is in toolbar: " << m_currentToolChar << std::endl;
                 }
                 break;
 
             case sf::Event::MouseMoved:
-                   // Check mouse position relative to toolbar
-                    board.highlightCell(event.mouseMove.x, event.mouseMove.y, H, W, &getRenderWindow());
-                
+                if (event.mouseMove.y > TOOLBAR_HEIGHT) {  // Ensure mouse movement is below the toolbar
+                    // board.highlightCell(event.mouseMove.x, event.mouseMove.y, m_windowHeight, m_W, m_cellHeight);
+                }
                 break;
             }
         }
     }
 }
 
-
-
-/// <summary>
-/// made a change 
-/// </summary>
-void WindowManager::createToolbar() {
-    toolbarTextures = board.loadTextures();  // Load textures from the Board class
-
-    float buttonWidth = static_cast<float>(W) / 8;
-    float buttonHeight = 50.0f;
-
-    toolbar.clear();  // Clear previous toolbar buttons
-
-    // Check if textures loaded correctly
-    if (toolbarTextures.empty()) {
-        std::cerr << "No textures loaded for toolbar." << std::endl;
-        return;
-    }
-
-    // Create toolbar buttons
-    for (size_t i = 0; i < board.getToolbarConfig().size(); ++i) {
-        sf::RectangleShape button(sf::Vector2f(buttonWidth, buttonHeight));
-        button.setFillColor(sf::Color::White);           // Set a default color for testing
-        button.setPosition(i * buttonWidth, 0);          // Position buttons with spacing
-
-        if (i < toolbarTextures.size()) {
-            button.setTexture(&toolbarTextures[i]);      // Bind the texture
-        }
-        else {
-            std::cerr << "Texture missing for button " << i << std::endl;
-        }
-
-        button.setOutlineColor(sf::Color::White);
-        button.setOutlineThickness(1);
-
-        toolbar.push_back(button);  // Add button to the toolbar vector
-    }
+float WindowManager::getCellWidth() const {
+    return m_cellWidth;
 }
 
-
-
-
-
-void WindowManager::handleToolbarClick(int mouseX) {
-    int buttonIndex = mouseX / (W / toolbar.size());  // Calculate button index based on toolbar width
-    if (buttonIndex >= 0 && buttonIndex < toolbar.size()) {
-        currentTool = static_cast<Object>(buttonIndex);  // Assign selected tool from toolbar
-    }
-}
-
-float WindowManager::getCellWidth() const
-{
-    return cellWidth;
-}
-
-float WindowManager::getCellHeight() const
-{
-    return cellHeight;
-}
-
-sf::RenderWindow& WindowManager::getRenderWindow() 
-{
-    return m_window;
+float WindowManager::getCellHeight() const {
+    return m_cellHeight;
 }
