@@ -1,57 +1,36 @@
 #pragma once
-#include <vector>
-#include <fstream>
-#include <iostream>
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include "Board.h"
 
-enum Object {
-    ROBOT, GUARD, DOOR, WALL, ROCK, SAVE,
-    DELETE, REMOVE
-};
-
-class Board {
+class WindowManager {
 public:
-    Board();
-    Board(int width, int height);
+    WindowManager();
 
-    void clearData();
-
-    bool saveToFile() const;
-    bool loadFromFile();
-    bool CheckExistFile();
-
-    bool loadToolbarConfig(const std::string& filepath);
-
-    std::vector<sf::Texture> loadTextures();
-    void initializeBoard(int cols, int rows, int W, int H);
    
-    void handleMouseClick(int mouseX, int mouseY, Object selectedObject);
-    bool checkToolbarHover(int mouseY, int toolbarHeight);
-    void highlightCell(int mouseX, int mouseY, int H, int W, sf::RenderWindow* window);
-    sf::Color getColorForObject(Object obj);
-    bool isRobotPresent();
+    void displayWindow();        // Display and handle the main event loop
+    void createToolbar();        // Create and configure the toolbar
+    void handleToolbarClick(int mouseX); // Handle clicks on the toolbar
 
-    void draw(sf::RenderWindow& window);
-
-    int getRows() const { return height; }
-    int getCols() const { return width; }
-    const std::vector<std::string>& getToolbarConfig() const { return toolbarConfig; }
-
-
-private:
-    int width = 0;
-    int height = 0;
-    std::vector<sf::RectangleShape> grid;
-    const std::string BOARD_FILE = "Board.txt";
-
-    std::vector<std::string> toolbarConfig; // Store toolbar configuration
-    
-    size_t getIndex(int x, int y) const;
-
+    float getCellWidth() const;  // Accessor for cell width
+    float getCellHeight() const; // Accessor for cell height
     /// <summary>
-    /// chnage 
+    /// shnage
     /// </summary>
-   
-    bool isToolbarAreaHovered = false;
+    /// <returns></returns>
+    sf::RenderWindow& getRenderWindow();
+        
+    
+private:
+    Board board;
+    int W = 800;                 // Default window width
+    int H = 600;                 // Default window height
+    float cellWidth = 0.f;       // Calculated cell width
+    float cellHeight = 0.f;      // Calculated cell height
+    void setupWindow();          // Setup window dimensions and properties
 
+    sf::RenderWindow m_window;   // SFML render window
+    std::vector<sf::RectangleShape> toolbar; // Toolbar buttons
+    std::vector<sf::Texture> toolbarTextures; // Toolbar button textures
+    Object currentTool = Object::ROBOT; // Default tool
 };
