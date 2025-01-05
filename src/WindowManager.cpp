@@ -15,7 +15,6 @@ void WindowManager::setupWindow() {
     const int cellSize = 32;           // Size of each board cell
 
     if (m_board.CheckExistFile()) {
-
         m_windowWidth = std::max(minWidth, m_board.getCols() * cellSize);
         m_windowHeight = std::max(minHeight, static_cast<int>(TOOLBAR_HEIGHT) + m_board.getRows() * cellSize);
         m_board.loadFromFile(m_windowWidth, m_windowHeight);
@@ -40,25 +39,19 @@ void WindowManager::setupWindow() {
         m_board.initializeBoard(width, height, m_windowWidth, m_windowHeight);
     }
 
-    // Validate window dimensions before creating the window
-    if (m_windowWidth <= 0 || m_windowHeight <= 0) {
-        std::cerr << "Error: Invalid window dimensions. Window creation failed." << std::endl;
-        return;  // Exit if invalid dimensions
-    }
-
     // Calculate cell dimensions
     m_cellWidth = (static_cast<float>(m_windowWidth)) / m_board.getCols();
     m_cellHeight = ((static_cast<float>(m_windowHeight)) - TOOLBAR_HEIGHT) / m_board.getRows();
 
-    // Create the window with validated dimensions
-    m_window.create(sf::VideoMode(m_windowWidth, m_windowHeight), "Board Editor");
+    // Create the window with a fixed size
+    m_window.create(sf::VideoMode(m_windowWidth, m_windowHeight), "Board Editor", sf::Style::Titlebar | sf::Style::Close);
 
-    // Check if the window was created successfully
     if (!m_window.isOpen()) {
         std::cerr << "Error: Failed to create window." << std::endl;
-        return;  // Exit if window creation failed
+        return;
     }
 }
+
 
 void WindowManager::displayWindow() {
     while (m_window.isOpen()) {
