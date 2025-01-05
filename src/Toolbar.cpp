@@ -105,6 +105,14 @@ char Toolbar::handleToolbarClick(int mouseX, sf::RenderWindow& window) {
         unsigned int buttonWidth = m_toolbarWidth / buttons.size();
         unsigned int buttonHeight = m_toolbarHeight;
 
+        for (size_t i = 0; i < buttons.size(); ++i) {
+            if (i == buttonIndex) {
+                buttons[i].setFillColor(sf::Color(230, 230, 230)); // Highlight clicked button
+            }
+            else {
+                buttons[i].setFillColor(sf::Color(100, 100, 100)); // Dim other buttons
+            }
+        }
 
         if (m_customCursor) {
             delete m_customCursor;
