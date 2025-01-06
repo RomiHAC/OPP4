@@ -79,14 +79,21 @@ void Board::handleMouseClick(int mouseX, int mouseY, char selectedObject) {
             grid[index].setTexture(nullptr); // Remove texture
             m_boardState[row][col] = ' '; // Update board state to empty
         }
-        else if(m_boardState[row][col] == ' ') {
+        else  {
             // Load the texture associated with the selected object
             sf::Texture* texture = getTextureForObject(selectedObject);
             if (texture) {
                 if (selectedObject == '/') {
                     updateLocationRobot();
                 }
-                grid[index].setTexture(texture); // Set the new texture
+
+                // Use sf::Sprite to draw the texture
+                sf::Sprite sprite(*texture);
+                sprite.setPosition(col * cellWidth, row * cellHeight + TOOLBAR_HEIGHT);
+                sprite.setScale(cellWidth / texture->getSize().x, cellHeight / texture->getSize().y);
+
+                // Draw the sprite directly to the grid
+                grid[index].setTexture(texture); // Still associate the texture with the cell
                 m_boardState[row][col] = selectedObject; // Update board state
             }
             else {
@@ -101,27 +108,18 @@ void Board::handleMouseClick(int mouseX, int mouseY, char selectedObject) {
     }
 }
 
-
-/// <summary>
-/// added
-/// </summary>
-/// <param name="mouseX"></param>
-/// <param name="mouseY"></param>
-/// <param name="H"></param>
-/// <param name="W"></param>
 void Board::updateLocationRobot() {
-    for (size_t row = 0; row < m_boardState.size(); ++row) {  // Loop through rows
-        for (size_t col = 0; col < m_boardState[row].size(); ++col) {  // Loop through columns
+    for (size_t row = 0; row < m_boardState.size(); ++row) { // Loop through rows
+        for (size_t col = 0; col < m_boardState[row].size(); ++col) { // Loop through columns
             if (m_boardState[row][col] == '/') {
                 m_boardState[row][col] = ' ';
                 size_t index = getIndex(static_cast<int>(col), static_cast<int>(row));
                 grid[index].setFillColor(sf::Color::White); // Empty cell
-                grid[index].setTexture(nullptr);
+                grid[index].setTexture(nullptr); // Remove texture
             }
         }
     }
 }
-
 
 /// <summary>
 /// added
