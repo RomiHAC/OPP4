@@ -75,13 +75,16 @@ void Board::handleMouseClick(int mouseX, int mouseY, int selectedObject) {
             m_boardState[row][col] = ' '; // Update board state to empty
         }
 
-        else if ( 0 <= selectedObject <= 5) {
+        else if (0 <= selectedObject <= 5) {
             // Load the texture associated with the selected object
             const sf::Texture& texture = getTextureForObject(selectedObject);
             if (&texture) {
 
                 if (m_objectOrder[selectedObject] == "ROBOT") {
                     updateLocationRobot();
+                }
+                else if (m_objectOrder[selectedObject] == "DOOR") {
+                    updateLocationDoor();
                 }
                 // std::cout << texture;
                 grid[index].setTexture(&texture); // Set the new texture
@@ -130,6 +133,20 @@ void Board::updateLocationRobot() {
         }
     }
 }
+
+void Board::updateLocationDoor() {
+    for (size_t row = 0; row < m_boardState.size(); ++row) {  // Loop through rows
+        for (size_t col = 0; col < m_boardState[row].size(); ++col) {  // Loop through columns
+            if (m_boardState[row][col] == 'D') {
+                m_boardState[row][col] = ' ';  // Clear the door ('D') cell
+                size_t index = getIndex(static_cast<int>(col), static_cast<int>(row));  // Get grid index
+                grid[index].setFillColor(sf::Color::White);  // Set to empty color
+                grid[index].setTexture(nullptr);  // Remove door texture
+            }
+        }
+    }
+}
+
 
 
 
