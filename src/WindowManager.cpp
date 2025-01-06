@@ -6,9 +6,15 @@ WindowManager::WindowManager() : m_windowWidth(800), m_windowHeight(600), m_cell
     Toolbar gameToolbar("Toolbar.txt", m_windowWidth, TOOLBAR_HEIGHT);
     m_toolbar = gameToolbar;
     m_objectOrder = m_toolbar.getToolbarConfig();
+    for (const auto& name : m_objectOrder) {
+        m_board.initializeTextures(name);
+    }
     displayWindow();
 }
 
+/// <summary>
+/// apdate
+/// </summary>
 void WindowManager::setupWindow() {
     const int minWidth = 1200;          // Minimum window width
     const int minHeight = 1000;         // Minimum window height
@@ -53,6 +59,9 @@ void WindowManager::setupWindow() {
 }
 
 
+/// <summary>
+/// added now 
+/// </summary>
 void WindowManager::displayWindow() {
     while (m_window.isOpen()) {
         m_window.clear();
@@ -87,10 +96,10 @@ void WindowManager::displayWindow() {
                         }
                     }
                     if (m_currentToolChar == 'd') {
-                        //logic
+                        //dlelte
                     }
                     if (m_currentToolChar == 'r') {
-                        m_currentToolChar = ' ';
+                        m_currentToolChar = Object::REMOVE;
                     }
                     std::cout << "Selected tool is in toolbar: " << m_currentToolChar << std::endl;
                 }
@@ -100,9 +109,9 @@ void WindowManager::displayWindow() {
                
                 if (event.mouseMove.y > TOOLBAR_HEIGHT) {  // Ensure mouse movement is below the toolbar
                      
-                    if (!clickONtoolbar) {
+                    /*if (!clickONtoolbar) {
                         changeMouse(event.mouseMove.y > TOOLBAR_HEIGHT);
-                    }
+                    }*/
                     m_board.highlightCell(event.mouseMove.x, event.mouseMove.y, m_windowHeight, m_windowWidth);
                 }
                 else {
@@ -151,3 +160,12 @@ void WindowManager::changeMouse(bool aboveToolbar)
 }
 
 
+const std::vector<std::string>& WindowManager::getToolbarConfig() const {
+    return m_objectOrder;
+}
+
+void WindowManager::loadTexture() {
+    for (const auto& name : m_objectOrder){
+        
+    }
+}
