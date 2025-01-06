@@ -1,7 +1,7 @@
 #include "WindowManager.h"
 #include <iostream>
 
-WindowManager::WindowManager() : m_windowWidth(1200), m_windowHeight(1000), m_cellWidth(0.f), m_cellHeight(0.f), m_currentToolIndex(-1),
+WindowManager::WindowManager() : m_windowWidth(1200), m_windowHeight(1000), m_cellWidth(0.f), m_cellHeight(0.f), m_currentToolIndex(9),
     m_clickONtoolbar(false), m_ONwindow(false) {
     Toolbar gameToolbar("Toolbar.txt", m_windowWidth, TOOLBAR_HEIGHT);
     m_toolbar = gameToolbar;
@@ -80,7 +80,7 @@ void WindowManager::displayWindow() {
 
             case sf::Event::MouseButtonReleased:
                 if (event.mouseButton.y > TOOLBAR_HEIGHT ) {  // Check mouse position relative to toolbar
-                    if ( m_currentToolIndex >= 0) {
+                    if ( m_currentToolIndex != 9) {
                         m_board.handleMouseClick(event.mouseButton.x, event.mouseButton.y, m_currentToolIndex);
                     }
                   
@@ -158,7 +158,7 @@ void WindowManager::displayWindow() {
                     if (m_ONwindow) {
                         if (!m_clickONtoolbar) {
                             changeMouse(event.mouseMove.y > TOOLBAR_HEIGHT);
-                            updateCurrToolIndex(-1);  // added so it wont update the last picture 
+                            updateCurrToolIndex(9);  // added so it wont update the last picture 
                         }
                         updateclickONtoolbar(false);
                       
