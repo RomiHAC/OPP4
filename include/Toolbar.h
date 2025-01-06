@@ -11,7 +11,7 @@ public:
     void draw(sf::RenderWindow& window) const;
     std::vector<sf::Texture> loadTextures();
     void createToolbar(int windowWidth, float cellHeight);
-    char handleToolbarClick(int mouseX, sf::RenderWindow& window);
+    int handleToolbarClick(int mouseX, sf::RenderWindow& window);
     const std::vector<std::string>& getToolbarConfig() const;
 
 private:
