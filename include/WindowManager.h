@@ -10,8 +10,8 @@ public:
     float getCellWidth() const;  // Accessor for cell width
     float getCellHeight() const; // Accessor for cell height
 
-   
-   
+
+
 
 private:
     Board m_board;
@@ -29,7 +29,7 @@ private:
     // 
     // 
     /////added
-    void changeMouse(bool aboveToolbar) ;
+    void changeMouse(bool aboveToolbar);
     bool clickONtoolbar = false;
-   
+
 };
