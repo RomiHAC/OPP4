@@ -14,7 +14,7 @@ WindowManager::WindowManager() : m_windowWidth(1200), m_windowHeight(1000), m_ce
 }
 
 /// <summary>
-/// apdate
+/// update
 /// </summary>
 void WindowManager::setupWindow() {
     const int minWidth = 1200;          // Minimum window width
