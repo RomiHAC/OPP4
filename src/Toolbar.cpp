@@ -92,8 +92,8 @@ void Toolbar::createToolbar(int windowWidth, float cellHeight) {
     }
 }
 
-char Toolbar::handleToolbarClick(int mouseX, sf::RenderWindow& window) {
-    char selectedObject = ' ';
+int Toolbar::handleToolbarClick(int mouseX, sf::RenderWindow& window) {
+    //int selectedObject = 0;
     int buttonIndex = mouseX / (m_toolbarWidth / buttons.size());
     if (buttonIndex >= 0 && buttonIndex < buttons.size()) {
         std::cout << "Clicked on toolbar button index: " << buttonIndex << std::endl;
@@ -146,32 +146,33 @@ char Toolbar::handleToolbarClick(int mouseX, sf::RenderWindow& window) {
             std::cerr << "Failed to create custom cursor for button: " << toolbarConfig[buttonIndex] << std::endl;
         }
     }
-
-    if (toolbarConfig[buttonIndex] == "ROBOT") {
-        selectedObject = '/';
-    }
-    else if (toolbarConfig[buttonIndex] == "GUARD") {
-        selectedObject = '!';
-    }
-    else if (toolbarConfig[buttonIndex] == "DOOR") {
-        selectedObject = 'D';
-    }
-    else if (toolbarConfig[buttonIndex] == "WALL") {
-        selectedObject = '#';
-    }
-    else if (toolbarConfig[buttonIndex] == "ROCK") {
-        selectedObject = '@';
-    }
-    else if (toolbarConfig[buttonIndex] == "SAVE") {
-        selectedObject = 's';
-    }
-    else if (toolbarConfig[buttonIndex] == "DELETE") {
-        selectedObject = 'd';
-    }
-    else if (toolbarConfig[buttonIndex] == "REMOVE") {
-        selectedObject = 'r';
-    }
-    return selectedObject;
+    std::cout << buttonIndex << std::endl;
+    return buttonIndex;
+        /*   if (toolbarConfig[buttonIndex] == "ROBOT") {
+               selectedObject = '/';
+           }
+           else if (toolbarConfig[buttonIndex] == "GUARD") {
+               selectedObject = '!';
+           }
+           else if (toolbarConfig[buttonIndex] == "DOOR") {
+               selectedObject = 'D';
+           }
+           else if (toolbarConfig[buttonIndex] == "WALL") {
+               selectedObject = '#';
+           }
+           else if (toolbarConfig[buttonIndex] == "ROCK") {
+               selectedObject = '@';
+           }
+           else if (toolbarConfig[buttonIndex] == "SAVE") {
+               selectedObject = 's';
+           }
+           else if (toolbarConfig[buttonIndex] == "DELETE") {
+               selectedObject = 'd';
+           }
+           else if (toolbarConfig[buttonIndex] == "REMOVE") {
+               selectedObject = 'r';
+           }
+           return selectedObject;*/
 }
 
 const std::vector<std::string>& Toolbar::getToolbarConfig() const {
