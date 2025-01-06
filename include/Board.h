@@ -16,45 +16,46 @@ class Board {
 public:
     Board();
     Board(int width, int height);
+
     void clearData();
     bool saveToFile() const;
     bool loadFromFile(int windowWidth, int windowHeight);
     bool CheckExistFile();
+
     void initializeBoard(int cols, int rows, int W, int H);
-    void handleMouseClick(int mouseX, int mouseY, char selectedObject);
+    void handleMouseClick(int mouseX, int mouseY, int selectedObject);
+    
+    //added
+    /// <summary>
+    void highlightCell(const int mouseX,const int mouseY,const int H,const int W);
+    void updateLocationRobot();
+    
    
-   //added
-   /// <summary>
-   void highlightCell(const int mouseX,const int mouseY,const int H,const int W);
-   void updateLocationRobot();
-    //
+   
     void draw(sf::RenderWindow& window);
-    sf::Texture* getTextureForObject(char selectedObject);
-    void initializeTextures();
+    const sf::Texture& getTextureForObject(const int& selectedObject) const;
 
-
+    void initializeTextures(std::string name);
     int getRows() const;
     int getCols() const;
 
 private:
     std::vector<std::vector<char>> m_boardState;
-    std::vector<sf::Texture> m_objectTextures;
+   // std::vector<sf::Texture> m_objectTextures;
     int m_width;
     int m_height;
-    //float m_toolbarHeight;
-    float m_offsetX;
-    float m_offsetY;
     std::vector<sf::RectangleShape> grid;
     const std::string BOARD_FILE = "Board.txt";
     size_t getIndex(int x, int y) const;
     bool countRowsAndCols();
     std::vector<sf::Texture> m_textures;
     std::vector<std::string> toolbarConfig;
+    std::vector<char> m_orderOfObjects;
     // Texture objects for different objects
-    sf::Texture robotTexture;
-    sf::Texture guardTexture;
-    sf::Texture doorTexture;
-    sf::Texture wallTexture;
-    sf::Texture rockTexture;
+    //sf::Texture robotTexture;
+    //sf::Texture guardTexture;
+    //sf::Texture doorTexture;
+    //sf::Texture wallTexture;
+    //sf::Texture rockTexture;
 
 };
