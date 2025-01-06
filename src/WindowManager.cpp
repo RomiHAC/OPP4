@@ -1,14 +1,14 @@
 #include "WindowManager.h"
 #include <iostream>
 
-WindowManager::WindowManager() : m_windowWidth(800), m_windowHeight(600), m_cellWidth(0.f), m_cellHeight(0.f), m_currentToolIndex(0) {
-    setupWindow();
+WindowManager::WindowManager() : m_windowWidth(1200), m_windowHeight(1000), m_cellWidth(0.f), m_cellHeight(0.f), m_currentToolIndex(0) {
     Toolbar gameToolbar("Toolbar.txt", m_windowWidth, TOOLBAR_HEIGHT);
     m_toolbar = gameToolbar;
     m_objectOrder = m_toolbar.getToolbarConfig();
     for (const auto& name : m_objectOrder) {
         m_board.initializeTextures(name);
     }
+    setupWindow();
     displayWindow();
 }
 
@@ -71,7 +71,7 @@ void WindowManager::displayWindow() {
 
         sf::Event event;
         while (m_window.pollEvent(event)) {
-           
+
             switch (event.type) {
             case sf::Event::Closed:
                 m_window.close();
@@ -86,29 +86,56 @@ void WindowManager::displayWindow() {
                     clickONtoolbar = true;
                     m_currentToolChar = m_toolbar.handleToolbarClick(event.mouseButton.x, m_window);
 
-                    if (m_currentToolChar == 's') {
-                        // Save the board to a file
+                    if (m_currentToolChar == Object::SAVE) {
                         if (m_board.saveToFile()) {
-                            std::cout << "Board saved successfully!\n";
+                            std::cout << "Board successfully saved to Board.txt.\n";
                         }
                         else {
-                            std::cerr << "Failed to save the board.\n";
+                            std::cerr << "Failed to save the board to Board.txt.\n";
+                        }
+                        std::cout << "entered here: " << m_currentToolChar << "\n";
+                    }
+
+                    if (m_currentToolChar == Object::CLEAR) {
+                        // Close the window
+                        m_window.close();
+
+                        // Clear the board data
+                        m_board.clearData();
+
+                        // Prompt the user for new dimensions
+                        int width, height;
+                        std::cout << "Enter new board dimensions:\n";
+                        do {
+                            std::cout << "Width (positive integer): ";
+                            std::cin >> width;
+                        } while (width <= 0);
+                        do {
+                            std::cout << "Height (positive integer): ";
+                            std::cin >> height;
+                        } while (height <= 0);
+
+                        // Reinitialize the board with new dimensions
+                        m_windowWidth = std::max(1200, width * 32); // Minimum width logic
+                        m_windowHeight = std::max(1000, static_cast<int>(TOOLBAR_HEIGHT) + height * 32); // Minimum height logic
+                        m_board.initializeBoard(width, height, m_windowWidth, m_windowHeight);
+
+                        // Reopen the window
+                        m_window.create(sf::VideoMode(m_windowWidth, m_windowHeight), "Board Editor", sf::Style::Titlebar | sf::Style::Close);
+                        if (!m_window.isOpen()) {
+                            std::cerr << "Error: Failed to recreate window.\n";
+                            return;
                         }
                     }
-                    if (m_currentToolChar == 'd') {
-                        //dlelte
-                    }
-                    if (m_currentToolChar == 'r') {
-                        m_currentToolChar = Object::REMOVE;
-                    }
+
                     std::cout << "Selected tool is in toolbar: " << m_currentToolChar << std::endl;
                 }
                 break;
 
             case sf::Event::MouseMoved:
-               
+
                 if (event.mouseMove.y > TOOLBAR_HEIGHT) {  // Ensure mouse movement is below the toolbar
-                     
+
                     /*if (!clickONtoolbar) {
                         changeMouse(event.mouseMove.y > TOOLBAR_HEIGHT);
                     }*/
@@ -119,8 +146,8 @@ void WindowManager::displayWindow() {
                         changeMouse(event.mouseMove.y > TOOLBAR_HEIGHT);
                     }
 
-                   
-                    
+
+
                 }
                 break;
             }
@@ -140,9 +167,9 @@ float WindowManager::getCellHeight() const {
 /// 
 /// </summary>
 /// <param name="aboveToolbar"></param>
-void WindowManager::changeMouse(bool aboveToolbar) 
+void WindowManager::changeMouse(bool aboveToolbar)
 {
-    
+
     if (aboveToolbar) {
         sf::Cursor defaultCursor;
         if (defaultCursor.loadFromSystem(sf::Cursor::Arrow)) {
@@ -152,20 +179,10 @@ void WindowManager::changeMouse(bool aboveToolbar)
     else {
         sf::Cursor customCursor;
         if (customCursor.loadFromSystem(sf::Cursor::Hand)) {
-           
+
             m_window.setMouseCursor(customCursor); // Set custom cursor
 
         }
     }
 }
 
-
-const std::vector<std::string>& WindowManager::getToolbarConfig() const {
-    return m_objectOrder;
-}
-
-void WindowManager::loadTexture() {
-    for (const auto& name : m_objectOrder){
-        
-    }
-}
