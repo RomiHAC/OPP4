@@ -158,7 +158,7 @@ void WindowManager::displayWindow() {
                     if (m_ONwindow) {
                         if (!m_clickONtoolbar) {
                             changeMouse(event.mouseMove.y > TOOLBAR_HEIGHT);
-                            updateCurrToolIndex(-1);
+                            updateCurrToolIndex(-1);  // added so it wont update the last picture 
                         }
                         updateclickONtoolbar(false);
                       
