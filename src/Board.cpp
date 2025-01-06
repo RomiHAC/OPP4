@@ -64,7 +64,7 @@ void Board::handleMouseClick(int mouseX, int mouseY, int selectedObject) {
 
     int col = static_cast<int>(mouseX / cellWidth); // Calculate the column
     int row = static_cast<int>(adjustedMouseY / cellHeight); // Calculate the row
-   // std::cout << "selectedObject: " << selectedObject << ", Object::SAVE: " << Object::SAVE << "\n";
+    // std::cout << "selectedObject: " << selectedObject << ", Object::SAVE: " << Object::SAVE << "\n";
 
     if (col >= 0 && col < m_width && row >= 0 && row < m_height) {
         size_t index = getIndex(col, row);
@@ -75,7 +75,7 @@ void Board::handleMouseClick(int mouseX, int mouseY, int selectedObject) {
             m_boardState[row][col] = ' '; // Update board state to empty
         }
 
-        else if (selectedObject <= 5) {
+        else if ( 0 <= selectedObject <= 5) {
             // Load the texture associated with the selected object
             const sf::Texture& texture = getTextureForObject(selectedObject);
             if (&texture) {
