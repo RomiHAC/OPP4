@@ -1,7 +1,8 @@
 #include "WindowManager.h"
 #include <iostream>
 
-WindowManager::WindowManager() : m_windowWidth(1200), m_windowHeight(1000), m_cellWidth(0.f), m_cellHeight(0.f), m_currentToolIndex(0) {
+WindowManager::WindowManager() : m_windowWidth(1200), m_windowHeight(1000), m_cellWidth(0.f), m_cellHeight(0.f), m_currentToolIndex(-1),
+    m_clickONtoolbar(false), m_ONwindow(false) {
     Toolbar gameToolbar("Toolbar.txt", m_windowWidth, TOOLBAR_HEIGHT);
     m_toolbar = gameToolbar;
     m_objectOrder = m_toolbar.getToolbarConfig();
@@ -78,25 +79,32 @@ void WindowManager::displayWindow() {
                 break;
 
             case sf::Event::MouseButtonReleased:
-                if (event.mouseButton.y > TOOLBAR_HEIGHT) {  // Check mouse position relative to toolbar
-                    m_board.handleMouseClick(event.mouseButton.x, event.mouseButton.y, m_currentToolChar);
-                    clickONtoolbar = false;
+                if (event.mouseButton.y > TOOLBAR_HEIGHT ) {  // Check mouse position relative to toolbar
+                    if ( m_currentToolIndex >= 0) {
+                        m_board.handleMouseClick(event.mouseButton.x, event.mouseButton.y, m_currentToolIndex);
+                    }
+                  
+                    
+                    
                 }
+             
                 else {  // Toolbar area
-                    clickONtoolbar = true;
-                    m_currentToolChar = m_toolbar.handleToolbarClick(event.mouseButton.x, m_window);
+                       updateONwindow(false);
+                       updateclickONtoolbar(true);
+                       updateCurrToolIndex(m_toolbar.handleToolbarClick(event.mouseButton.x, m_window));
+                      // m_currentToolIndex = m_toolbar.handleToolbarClick(event.mouseButton.x, m_window);
 
-                    if (m_currentToolChar == Object::SAVE) {
+                    if (m_currentToolIndex == Object::SAVE) {
                         if (m_board.saveToFile()) {
                             std::cout << "Board successfully saved to Board.txt.\n";
                         }
                         else {
                             std::cerr << "Failed to save the board to Board.txt.\n";
                         }
-                        std::cout << "entered here: " << m_currentToolChar << "\n";
+                        std::cout << "entered here: " << m_currentToolIndex << "\n";
                     }
 
-                    if (m_currentToolChar == Object::CLEAR) {
+                    if (m_currentToolIndex == Object::CLEAR) {
                         // Close the window
                         m_window.close();
 
@@ -128,22 +136,32 @@ void WindowManager::displayWindow() {
                         }
                     }
 
-                    std::cout << "Selected tool is in toolbar: " << m_currentToolChar << std::endl;
+                    std::cout << "Selected tool is in toolbar: " << m_currentToolIndex << std::endl;
                 }
                 break;
 
             case sf::Event::MouseMoved:
 
+               
                 if (event.mouseMove.y > TOOLBAR_HEIGHT) {  // Ensure mouse movement is below the toolbar
-
-                    /*if (!clickONtoolbar) {
+                    updateONwindow(true);
+                   
+                    if (!m_clickONtoolbar) {
                         changeMouse(event.mouseMove.y > TOOLBAR_HEIGHT);
-                    }*/
+                        
+                    }
+                   
                     m_board.highlightCell(event.mouseMove.x, event.mouseMove.y, m_windowHeight, m_windowWidth);
                 }
                 else {
-                    if (!clickONtoolbar) {
-                        changeMouse(event.mouseMove.y > TOOLBAR_HEIGHT);
+                    
+                    if (m_ONwindow) {
+                        if (!m_clickONtoolbar) {
+                            changeMouse(event.mouseMove.y > TOOLBAR_HEIGHT);
+                            updateCurrToolIndex(-1);
+                        }
+                        updateclickONtoolbar(false);
+                      
                     }
 
 
@@ -161,6 +179,24 @@ float WindowManager::getCellWidth() const {
 
 float WindowManager::getCellHeight() const {
     return m_cellHeight;
+}
+
+
+/// <summary>
+/// update
+/// </summary>
+/// <param name="status"></param>
+/// 
+
+void WindowManager::updateCurrToolIndex(int tocheck)
+{
+    m_currentToolIndex = tocheck;
+}
+void WindowManager::updateclickONtoolbar(bool status) {
+    m_clickONtoolbar = status;
+}
+void WindowManager::updateONwindow(bool status) {
+    m_ONwindow = status;
 }
 
 /// <summary>
@@ -185,4 +221,3 @@ void WindowManager::changeMouse(bool aboveToolbar)
         }
     }
 }
-
