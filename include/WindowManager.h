@@ -2,7 +2,7 @@
 #include <vector>
 #include "Board.h"
 #include "Toolbar.h"
-
+const int UN_TOUCHED = 9;
 class WindowManager {
 public:
     WindowManager();
