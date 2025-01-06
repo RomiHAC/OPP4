@@ -11,6 +11,14 @@ public:
     float getCellHeight() const; // Accessor for cell height
 
 
+    /// <summary>
+    /// added
+    /// </summary>
+    /// <param name="status"></param>
+    void updateclickONtoolbar(bool status);
+    void updateONwindow(bool status);
+    void  updateCurrToolIndex(int tocheck);
+
 
 
 private:
@@ -24,12 +32,13 @@ private:
     void setupWindow();          // Setup window dimensions and properties
     sf::RenderWindow m_window;   // SFML render window
     int m_currentToolIndex;
-    char m_currentToolChar;
+    //char m_currentToolChar;
     // Object m_currentTool = Object::ROBOT; // Default tool
     // 
     // 
     /////added
     void changeMouse(bool aboveToolbar);
-    bool clickONtoolbar = false;
+    bool m_ONwindow ;
+    bool m_clickONtoolbar;
 
 };
