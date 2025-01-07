@@ -84,8 +84,15 @@ void Board::handleMouseClick(int mouseX, int mouseY, int selectedObject) {
                     updateLocationRobot();
                 }
                 else if (m_objectOrder[selectedObject] == "DOOR") {
+                    // Check if the door can be placed only on valid boundaries
+                    if (row != 0 && col != 0 && row != m_boardState.size() - 1 && col != m_boardState[row].size() - 1) {
+                        std::cerr << "Invalid door placement! Doors can only be placed on the first row, first column, "
+                            "last row, or last column.\n";
+                        return;  // Exit without making changes
+                    }
                     updateLocationDoor();
                 }
+
                 // std::cout << texture;
                 grid[index].setTexture(&texture); // Set the new texture
                 if (m_objectOrder[selectedObject] == "ROBOT") {
