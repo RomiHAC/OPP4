@@ -1,22 +1,37 @@
 Geometric Shapes Project
 program by: Or-Ram Atar and Romi Sinizkey
 
-This project loading a game in which the player need to escape from the gaurds throw the door.
-each of the guards have different level of hardness and the tools that the player have to avoid them 
-or deal with them, is putting a bomb to destroy the guards and other obstacles.
+- This project loading a window based on the size that the user decided before creating the window.
+ -The project creating a toolbar on the top of the window and the order of the buttons is based on source that
+stored in the Toolbar File
+-now, aftet the window finished creating it, the user can press the buttons on the toolbar 
+and choose how will the window look for the game.
+-the toolbar contains pictures that each of them is a button; the first 5 are buttons for building the window,the other
+handling SAVE/DELETE/CLEAR the window.
 
-
-the following files were already provided to us and were untouched: txt.CMakeLists, main.cpp,io.cpp, io.h, Location.h.
+the following files were already provided to us and were untouched: txt.CMakeLists,.
 ***note: we have added.
-
-files that were added are: Bomb.h, Bomb.cpp, Guard.h, Guard.cpp, Gamemanager.h, Gamemanager.cpp, Board.h, Board.cpp, robot.h, robot.cpp.
+files that were added are:Board.h, Board.cpp, WindowManager.h, WindowManager.cpp, Toolbar.h, Toolbar.cpp.
+also we added to the File resource that already exist, the pictures and the Toolbar.txt that used for creating the toolbar .
 
 In Bomb.h, robot.h, Guard.h, Gamemanager.h, Board.h   we wrote the template of the class along with constructors, functions, and members;
-Gamemanager - loading the game, giving  stats for the player like  life and score, calling for other function  to 
-generate the game.
-Board - generate the map, have all the information about the map, where the player, guards , bomb, size and more.
-Guard - in charge of moving the guards and giving them the level of hardness.
-Bomb - generate bombs based on how much the player pressed b. the bomb destroying what  what is located near it.
-Bobot - storing the score and the function for moving the player. 
+ - Board: Responable for creaing each cell in the window and  for handling mouse click on the window part, 
+    after the user clicked on the window it checks what buttons he chose
+   and acording to that, the board makes the changes; 
+    Options Buttons:
+    Bomberman - can be putted everywhere without limit. 
+    Door - can putted once on the board and only at the edges.
+    Robot - can be putted once .
+    Rock - can be putted everywhere without limits. 
+    Save - saves the board for next time.
+    Delete - delete the board, so it will contain nothing.
+    Clear - clear specific cell, based on the user choice.
+    
+WindowManager - in charge of drawing the hall window and sending to the classes toolbar and board the tasks acording to the click mouse position.
+            also contains the information of the board.
+Toolbar - creates the toolbar which contain the buttons and handling if the user clicked on the toolbar; 
+         after the user clicked on one of the buttons, the next click should be on the board and it will "DO" according to the user choice from 
+         the toolbar (the explanation of each button if found in Board).
 
-In Bomb.cpp, Gamemaneger.cpp, Guard.cpp, Robot.cpp and Board.cpp  we have implemented the constructors, the specific functions for this class, and the functions that are in every class 
+
+
