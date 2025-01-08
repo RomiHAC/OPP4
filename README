@@ -1,0 +1,22 @@
+Geometric Shapes Project
+program by: Or-Ram Atar and Romi Sinizkey
+
+This project loading a game in which the player need to escape from the gaurds throw the door.
+each of the guards have different level of hardness and the tools that the player have to avoid them 
+or deal with them, is putting a bomb to destroy the guards and other obstacles.
+
+
+the following files were already provided to us and were untouched: txt.CMakeLists, main.cpp,io.cpp, io.h, Location.h.
+***note: we have added.
+
+files that were added are: Bomb.h, Bomb.cpp, Guard.h, Guard.cpp, Gamemanager.h, Gamemanager.cpp, Board.h, Board.cpp, robot.h, robot.cpp.
+
+In Bomb.h, robot.h, Guard.h, Gamemanager.h, Board.h   we wrote the template of the class along with constructors, functions, and members;
+Gamemanager - loading the game, giving  stats for the player like  life and score, calling for other function  to 
+generate the game.
+Board - generate the map, have all the information about the map, where the player, guards , bomb, size and more.
+Guard - in charge of moving the guards and giving them the level of hardness.
+Bomb - generate bombs based on how much the player pressed b. the bomb destroying what  what is located near it.
+Bobot - storing the score and the function for moving the player. 
+
+In Bomb.cpp, Gamemaneger.cpp, Guard.cpp, Robot.cpp and Board.cpp  we have implemented the constructors, the specific functions for this class, and the functions that are in every class 
