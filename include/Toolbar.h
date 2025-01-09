@@ -6,13 +6,15 @@
 class Toolbar {
 public:
     Toolbar();
-    Toolbar(const std::string& configFile, int windowWidth, float cellHeight);
+    Toolbar(const std::string& configFile, const int windowWidth, const float cellHeight);
     bool loadConfig(const std::string& configFile);
     void draw(sf::RenderWindow& window) const;
-    std::vector<sf::Texture> loadTextures();
-    void createToolbar(int windowWidth, float cellHeight);
+    std::vector<sf::Texture> loadTextures() const;
+    void createToolbar(const int windowWidth, const float cellHeight);
     int handleToolbarClick(int mouseX, sf::RenderWindow& window);
     const std::vector<std::string>& getToolbarConfig() const;
+    void unDimButtons();
+
 
 private:
 
