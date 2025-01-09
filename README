@@ -1,37 +1,56 @@
-Geometric Shapes Project
-program by: Or-Ram Atar and Romi Sinizkey
+BOMBERMAN - EDITOR
+program by: Or-Ram Atar(325004851) and Romi Sinizkey (322311457)
 
-- This project loading a window based on the size that the user decided before creating the window.
- -The project creating a toolbar on the top of the window and the order of the buttons is based on source that
-stored in the Toolbar File
--now, aftet the window finished creating it, the user can press the buttons on the toolbar 
-and choose how will the window look for the game.
--the toolbar contains pictures that each of them is a button; the first 5 are buttons for building the window,the other
-handling SAVE/DELETE/CLEAR the window.
+This project implements a Bomberman Level Editor that allows users to design and save custom game boards. The editor provides a graphical interface for placing and modifying game elements, including the player ('/'), guards ('!'), the door ('D'), rocks ('@'), and walls ('#').
+first the program checks if "Board.txt" exist if not it asks the user for board dimensions 
+then The user can interact with the editor through a toolbar and a grid-based editing area:
+
+Toolbar: Contains buttons for selecting objects to place on the grid, clearing the grid, and saving the level.
+Grid Area: Displays the editable game board, where users can position objects.
+Controls: Mouse clicks interact with the toolbar and place objects on the grid.
+Users can save their custom levels to a file (Board.txt) for use in gameplay.
+
 
 the following files were already provided to us and were untouched: txt.CMakeLists,.
 ***note: we have added.
-files that were added are:Board.h, Board.cpp, WindowManager.h, WindowManager.cpp, Toolbar.h, Toolbar.cpp.
-also we added to the File resource that already exist, the pictures and the Toolbar.txt that used for creating the toolbar .
+we added to the File resource that already exist, the pictures and the Toolbar.txt that used for the buttons order.
+Added Files:
+Board.h, Board.cpp: Manages the game board, its dimensions, and its content (loading, saving, clearing, and editing).
+Toolbar.h, Toolbar.cpp: Handles the toolbar logic, including button placement, user interaction, and toolbar visuals.
+WindowManager.h, WindowManager.cpp: Manages the overall window display and integrates the board and toolbar functionality.
 
-In Bomb.h, robot.h, Guard.h, Gamemanager.h, Board.h   we wrote the template of the class along with constructors, functions, and members;
- - Board: Responable for creaing each cell in the window and  for handling mouse click on the window part, 
-    after the user clicked on the window it checks what buttons he chose
-   and acording to that, the board makes the changes; 
-    Options Buttons:
-    Bomberman - can be putted everywhere without limit. 
-    Door - can putted once on the board and only at the edges.
-    Robot - can be putted once .
-    Rock - can be putted everywhere without limits. 
-    Save - saves the board for next time.
-    Delete - delete the board, so it will contain nothing.
-    Clear - clear specific cell, based on the user choice.
+    Buttons Options:
+    Bomberman - can be placed everywhere without limit but there can be only one bomber man. 
+    Door - can be placed once on the board and only on the borders.
+    Robot - can be placed everywhere.
+    Rock - can be placed everywhere without limits. 
+    Save - saves the board to "Board.txt" file and is locating in debug repository.
+    Delete - delete specific cell, based on the user choice. 
+    Clear - close the window gets from the user new dimensions for the board and open a new empty board with those dimensions
     
-WindowManager - in charge of drawing the hall window and sending to the classes toolbar and board the tasks acording to the click mouse position.
-            also contains the information of the board.
-Toolbar - creates the toolbar which contain the buttons and handling if the user clicked on the toolbar; 
-         after the user clicked on one of the buttons, the next click should be on the board and it will "DO" according to the user choice from 
-         the toolbar (the explanation of each button if found in Board).
+Main Data Structures:
+std::vector<std::vector<char>>: Represents the editable game board.
+std::vector<std::string>: Stores object configurations and textures.
+std::vector<sf::RectangleShape>: Represents toolbar buttons and grid cells graphically.
 
+Special Algorithms:
+Mouse Interaction Handling:
 
+Maps mouse coordinates to toolbar or grid positions.
+Determines the appropriate action based on the current selected tool.
 
+File Saving and Loading:
+
+Saves the current grid state to a Board.txt file, maintaining object types and positions.
+Loads existing configurations for editing or validating file formats.
+
+Design Overview:
+Objects:
+Board: Represents the game grid, including its layout and content. Handles operations like clearing, updating, and saving the grid.
+Toolbar: Provides an interactive interface for selecting tools and managing the editor.
+WindowManager: Combines the toolbar and board functionality, ensuring smooth interactions between user actions and visual updates.
+
+Interactions:
+Toolbar to Board: The toolbar sends user-selected object types to the board for placement.
+Board to Toolbar: The board updates the toolbar (e.g., when clearing or saving).
+WindowManager: Manages event handling, rendering, and communication between the board and toolbar.
