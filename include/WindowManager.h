@@ -3,23 +3,18 @@
 #include "Board.h"
 #include "Toolbar.h"
 const int UN_TOUCHED = 9;
+const int WINDOW_WIDTH = 1200;
+const int WINDOW_HEIGHT = 1000;         // Minimum window height
+const int CELL_SIZE = 32;           // Size of each board cell
+
 class WindowManager {
 public:
     WindowManager();
     void displayWindow();        // Display and handle the main event loop
-    float getCellWidth() const;  // Accessor for cell width
-    float getCellHeight() const; // Accessor for cell height
-
-
-    /// <summary>
-    /// added
-    /// </summary>
-    /// <param name="status"></param>
     void updateclickONtoolbar(bool status);
     void updateONwindow(bool status);
-    void  updateCurrToolIndex(int tocheck);
-
-
+    void  updateCurrToolIndex(int currentToolIndex);
+    void setupWindow();             // Setup window dimensions and properties
 
 private:
     Board m_board;
@@ -27,18 +22,14 @@ private:
     int m_windowWidth;                 // Default window width
     int m_windowHeight;                 // Default window height
     std::vector<std::string> m_objectOrder;
-    float m_cellWidth;       // Calculated cell width
-    float m_cellHeight;      // Calculated cell height
-    void setupWindow();          // Setup window dimensions and properties
     sf::RenderWindow m_window;   // SFML render window
     int m_currentToolIndex;
-    //char m_currentToolChar;
-    // Object m_currentTool = Object::ROBOT; // Default tool
-    // 
-    // 
-    /////added
+
+    bool m_OnWindow;
+    bool m_ClickOnToolbar;
+
+    void checkFileExist();          // Setup window dimensions and properties
+
     void changeMouse(bool aboveToolbar);
-    bool m_ONwindow ;
-    bool m_clickONtoolbar;
 
 };
