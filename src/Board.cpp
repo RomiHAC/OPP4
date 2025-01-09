@@ -64,9 +64,13 @@ void Board::handleMouseClick(const int mouseX, const int mouseY, const int selec
 
         else if (selectedObject <= 5) {
             
-            const sf::Texture& texture = getTextureForObject(selectedObject);
-            if (&texture) {
-
+            
+           
+            if (0 <= selectedObject && selectedObject < m_textures.size()) {
+               sf::Sprite sprite;
+               sprite.setTexture(getTextureForObject(selectedObject))
+               sprite.setPosition(col * m_cellWidth, (row * m_cellHeight) + TOOLBAR_HEIGHT);
+                
                 if (m_objectOrder[selectedObject] == "ROBOT") {
                     updateLocationRobot();
                 }
@@ -78,7 +82,7 @@ void Board::handleMouseClick(const int mouseX, const int mouseY, const int selec
                     updateLocationDoor();
                 }
 
-                grid[index].setTexture(&texture); 
+                 grid[index].setTexture(sprite.getTexture());
                 if (m_objectOrder[selectedObject] == "ROBOT") {
                     m_boardState[row][col] = '/'; 
                 }
