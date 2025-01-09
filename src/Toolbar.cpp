@@ -7,7 +7,7 @@ Toolbar::Toolbar()
     : m_toolbarWidth(0), m_toolbarHeight(0), m_customCursor(nullptr) {
 }
 
-Toolbar::Toolbar(const std::string& configFile, int windowWidth, float cellHeight)
+Toolbar::Toolbar(const std::string& configFile, const int windowWidth, const float cellHeight)
     : m_toolbarWidth(windowWidth), m_toolbarHeight(cellHeight), m_customCursor(nullptr) {
     if (loadConfig(configFile)) {
         createToolbar(windowWidth, cellHeight);
@@ -45,10 +45,8 @@ bool Toolbar::loadConfig(const std::string& configFile) {
     return true;
 }
 
-std::vector<sf::Texture> Toolbar::loadTextures() {
+std::vector<sf::Texture> Toolbar::loadTextures() const {
     std::vector<sf::Texture> textures;
-
-    std::cout << "Number of toolbar items: " << toolbarConfig.size() << std::endl;
 
     for (const auto& name : toolbarConfig) {
         sf::Texture texture;
@@ -56,7 +54,6 @@ std::vector<sf::Texture> Toolbar::loadTextures() {
 
         if (texture.loadFromFile(filepath)) {
             textures.push_back(std::move(texture));
-            std::cout << "Loaded Texture: " << filepath << std::endl;
         }
         else {
             std::cerr << "Failed to load image: " << filepath << std::endl;
@@ -72,7 +69,7 @@ void Toolbar::draw(sf::RenderWindow& window) const {
     }
 }
 
-void Toolbar::createToolbar(int windowWidth, float cellHeight) {
+void Toolbar::createToolbar(const int windowWidth, const float cellHeight) {
     toolbarTextures = loadTextures();
 
     float buttonWidth = (static_cast<float>(windowWidth)) / toolbarConfig.size();
@@ -93,12 +90,9 @@ void Toolbar::createToolbar(int windowWidth, float cellHeight) {
 }
 
 int Toolbar::handleToolbarClick(int mouseX, sf::RenderWindow& window) {
-    //int selectedObject = 0;
     int buttonIndex = mouseX / (m_toolbarWidth / buttons.size());
 
     if (buttonIndex >= 0 && buttonIndex < (toolbarTextures.size() - CONTROL_BUTTONS)) {
-        std::cout << "Clicked on toolbar button index: " << buttonIndex << std::endl;
-        std::cout << "Button name: " << toolbarConfig[buttonIndex] << std::endl;
         unsigned int buttonWidth = m_toolbarWidth / buttons.size();
         unsigned int buttonHeight = m_toolbarHeight;
 
@@ -137,16 +131,21 @@ int Toolbar::handleToolbarClick(int mouseX, sf::RenderWindow& window) {
         m_customCursor = new sf::Cursor();
         if (m_customCursor->loadFromPixels(resizedImage.getPixelsPtr(), resizedImage.getSize(), hotspot)) {
             window.setMouseCursor(*m_customCursor);
-            std::cout << "Cursor changed to custom for button: " << toolbarConfig[buttonIndex] << std::endl;
         }
         else {
             std::cerr << "Failed to create custom cursor for button: " << toolbarConfig[buttonIndex] << std::endl;
         }
     }
-    std::cout << buttonIndex << std::endl;
     return buttonIndex;
 }
 
 const std::vector<std::string>& Toolbar::getToolbarConfig() const {
     return toolbarConfig;
+}
+
+void Toolbar::unDimButtons()
+{
+    for (size_t i = 0; i < buttons.size(); ++i) {
+        buttons[i].setFillColor(sf::Color(230, 230, 230)); // undim all buttons   
+    }
 }
