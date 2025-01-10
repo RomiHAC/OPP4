@@ -54,3 +54,6 @@ Interactions:
 Toolbar to Board: The toolbar sends user-selected object types to the board for placement.
 Board to Toolbar: The board updates the toolbar (e.g., when clearing or saving).
 WindowManager: Manages event handling, rendering, and communication between the board and toolbar.
+
+notes: 
+we have limited the user to enter dimensions of board up to 25X25 since above it, the board looks too full and not aesthetic
